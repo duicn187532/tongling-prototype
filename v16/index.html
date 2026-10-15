@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>彤靈談心｜Prototype v16｜Agent-Assisted Requirement Workflow</title>
+<title>彤靈談心｜Prototype v16.2｜Agent-Assisted Requirement Workflow</title>
 <style>
 :root{
   --ink:#261b25;--muted:#7b6f77;--paper:#fff9f6;--panel:#fff;--line:#eadce1;
@@ -287,6 +287,319 @@ textarea{width:100%;border:1px solid var(--line);border-radius:9px;min-height:56
 .prd-download-primary:hover{filter:brightness(.96)}
 @media(max-width:1000px){.agent-plan{grid-template-columns:1fr}.calendar-slots{grid-template-columns:1fr}.agent-mode-bar{grid-template-columns:1fr}.agent-actions{justify-content:flex-start}}
 
+
+/* v16.2 — reduce explanation noise */
+#workflowHero,
+#guideCard,
+.side-note,
+.agent-plan,
+.agent-head,
+.agent-step-banner{display:none!important}
+
+.settings-hero p{display:none}
+.settings-hero{padding:13px 15px;margin-bottom:10px}
+.settings-hero h3{font-size:18px;margin:0}
+
+.agent-mode-bar{
+  padding:9px 10px;
+  border-radius:13px;
+  margin-bottom:10px;
+  background:#fff;
+  box-shadow:0 6px 18px rgba(64,36,50,.05)
+}
+.agent-mode-main p{display:none}
+.agent-mode-main b{font-size:10px;margin:0}
+.agent-orb{width:32px;height:32px;border-radius:10px;font-size:10px}
+
+.agent-dashboard.show{
+  border:0;
+  padding:0;
+  background:transparent;
+  box-shadow:none;
+}
+.agent-current{
+  margin-top:0;
+  border:1px solid #d7ebe7;
+  background:linear-gradient(135deg,#f3fcfa,#fff);
+  border-radius:16px 16px 16px 6px;
+  padding:10px;
+  box-shadow:0 7px 20px rgba(64,36,50,.05)
+}
+.agent-current .ai{
+  background:linear-gradient(135deg,var(--aquaSoft),var(--roseSoft));
+  color:#5d4955
+}
+.agent-current b{font-size:10px}
+.agent-current span{font-size:8.7px;color:var(--muted)}
+
+
+.mobile-header,.mobile-backdrop{display:none}
+
+@media(max-width:780px){
+  html,body{
+    background:var(--paper);
+    overscroll-behavior-y:none;
+  }
+  body{padding-bottom:78px}
+  .app{display:block;min-height:100dvh}
+
+  /* Mobile off-canvas workflow drawer */
+  .sidebar{
+    display:block;
+    position:fixed;
+    z-index:120;
+    top:0;
+    bottom:0;
+    left:0;
+    width:min(86vw,330px);
+    height:100dvh;
+    padding:18px 14px calc(20px + env(safe-area-inset-bottom));
+    transform:translateX(-105%);
+    transition:transform .22s ease;
+    box-shadow:16px 0 45px rgba(25,15,23,.22);
+    overflow-y:auto;
+  }
+  .sidebar.mobile-open{transform:translateX(0)}
+  .sidebar .brand{margin-bottom:13px}
+  .sidebar .brand small{display:none}
+  .sidebar .case{margin-bottom:12px;padding:9px 10px}
+  .sidebar .case small{display:none}
+  .sidebar .case b{font-size:11px}
+  .sidebar .nav{
+    display:flex;
+    flex-direction:column;
+    overflow:visible;
+    gap:4px;
+  }
+  .sidebar .nav button{
+    min-width:0;
+    width:100%;
+    min-height:44px;
+    white-space:normal;
+    font-size:12px;
+    padding:8px 9px;
+  }
+  .sidebar .agent-step-status{font-size:8px}
+  .settings-entry button{min-height:48px}
+
+  .mobile-backdrop{
+    position:fixed;
+    z-index:110;
+    inset:0;
+    background:rgba(30,20,28,.34);
+    backdrop-filter:blur(2px);
+  }
+  .mobile-backdrop.show{display:block}
+
+  /* Mobile assistant header */
+  .mobile-header{
+    display:flex;
+    position:sticky;
+    top:0;
+    z-index:70;
+    margin:0 -12px 10px;
+    padding:9px 12px;
+    min-height:56px;
+    align-items:center;
+    justify-content:space-between;
+    gap:9px;
+    background:rgba(255,249,246,.94);
+    backdrop-filter:blur(18px);
+    border-bottom:1px solid rgba(234,220,225,.9);
+  }
+  .mobile-head-left{display:flex;gap:9px;align-items:center;min-width:0}
+  .mobile-menu{
+    width:39px;height:39px;border:1px solid var(--line);border-radius:12px;
+    background:#fff;color:var(--ink);font-size:17px;font-weight:900
+  }
+  .mobile-mini-logo{
+    width:34px;height:34px;border-radius:11px;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--rose),var(--aqua));
+    color:#fff;font-size:13px;font-weight:900;flex:none
+  }
+  .mobile-head-copy{min-width:0}
+  .mobile-head-copy b{
+    display:block;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+  }
+  .mobile-head-copy span{display:block;color:var(--muted);font-size:9px;margin-top:2px}
+  .mobile-prd{
+    min-width:50px;min-height:38px;border:1px solid #e6c3cc;border-radius:11px;
+    background:#fff6f8;color:var(--rose);font-size:10px;font-weight:900
+  }
+
+  .main{
+    padding:0 12px 96px;
+    min-height:100dvh;
+  }
+  .top{display:none}
+
+  /* Compact assistant controller */
+  .agent-mode-bar{
+    position:sticky;
+    top:66px;
+    z-index:55;
+    grid-template-columns:minmax(0,1fr);
+    margin:0 0 9px;
+    padding:8px;
+    border-radius:14px;
+    box-shadow:0 8px 24px rgba(64,36,50,.08)
+  }
+  .agent-mode-main{display:none}
+  .agent-actions{
+    display:grid;
+    grid-template-columns:auto minmax(0,1fr);
+    gap:7px;
+    width:100%;
+    justify-content:stretch
+  }
+  .agent-toggle{min-width:max-content}
+  .agent-toggle button{padding:7px 8px;font-size:10px}
+  #startAgentBtn{
+    min-height:42px;
+    font-size:12px;
+    border-radius:11px;
+  }
+
+  .agent-current{
+    grid-template-columns:34px minmax(0,1fr);
+    gap:9px;
+    padding:11px;
+    border-radius:18px 18px 18px 7px
+  }
+  .agent-current .ai{width:34px;height:34px;border-radius:11px}
+  .agent-current b{font-size:12px}
+  .agent-current span{font-size:10.5px;line-height:1.48}
+  #pauseAgentBtn{
+    grid-column:2;
+    justify-self:start;
+    min-height:36px;
+    margin-top:2px
+  }
+
+  /* One-column comfortable reading */
+  .shell{display:block}
+  .panel{
+    min-height:auto;
+    padding:14px 12px 16px;
+    border-radius:17px;
+    box-shadow:none
+  }
+  .aside{
+    position:static;
+    margin-top:10px;
+    padding:12px;
+    border-radius:16px;
+    box-shadow:none
+  }
+  .head{display:block;margin-bottom:12px}
+  .head h3{font-size:20px;line-height:1.35}
+  .head p{font-size:12px;line-height:1.55;margin-top:4px}
+
+  .card,.decision,.gate,.meeting-screen,.record-box,.compete-box,
+  .provider-card,.setting-card,.flow-stage,.arch-stage{
+    border-radius:15px;
+    box-shadow:none
+  }
+  .card{padding:12px}
+  .small{font-size:12px;line-height:1.6}
+  .muted{line-height:1.55}
+
+  .grid2,.grid3,.record-grid,.info-summary,
+  .setting-grid2,.setting-grid3,.provider-grid,.settings-runtime{
+    grid-template-columns:1fr!important
+  }
+
+  /* Touch targets */
+  .btn{
+    min-height:42px;
+    padding:9px 12px;
+    border-radius:11px;
+    font-size:11px
+  }
+  .actions{gap:8px}
+  .actions .btn.primary{flex:1}
+  input[type="text"],input[type="search"],input[type="url"],
+  input[type="email"],textarea,select,.compete-input{
+    font-size:16px!important
+  }
+  textarea{min-height:92px}
+
+  /* File / cards */
+  .drop{padding:19px 12px;border-radius:16px}
+  .drop b{font-size:14px}
+  .drop p{font-size:11px}
+  .file{grid-template-columns:34px minmax(0,1fr) auto;padding:9px}
+  .file b{font-size:11px}
+  .file small{font-size:9.5px}
+
+  /* Horizontal content */
+  .tablewrap,.flow-stage,.arch-stage,.mermaid-code{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch
+  }
+  table{min-width:760px;font-size:10.5px}
+  th,td{padding:9px}
+  .flow-tabs,.info-tabs{flex-wrap:nowrap;overflow-x:auto;padding-bottom:3px}
+  .flow-tab,.info-tab{white-space:nowrap;min-height:40px}
+
+  /* Meeting assistant */
+  .meeting-grid{grid-template-columns:1fr}
+  .meeting-screen{padding:10px;min-height:0}
+  .transcript{height:270px}
+  .utter{grid-template-columns:42px 54px minmax(0,1fr)}
+  .utter span{font-size:11px}
+  .calendar-slots{grid-template-columns:1fr}
+  .calendar-slot{min-height:52px}
+  .agent-meeting-plan{padding:11px}
+
+  /* PRD reading */
+  .prd-cover{padding:16px}
+  .prd-cover h2{font-size:20px}
+  .prd-body{padding:13px}
+  .prd-section p,.prd-section li,.prd-req{font-size:11.5px;line-height:1.62}
+  .prd-download-primary{
+    width:100%;
+    justify-content:center;
+    min-height:48px;
+    border-radius:12px;
+    font-size:12px
+  }
+
+  /* Chat-like fixed workflow controls */
+  .footer{
+    position:fixed;
+    z-index:65;
+    left:0;right:0;bottom:0;
+    margin:0;
+    padding:8px 12px calc(8px + env(safe-area-inset-bottom));
+    background:rgba(255,249,246,.95);
+    backdrop-filter:blur(18px);
+    border-top:1px solid rgba(234,220,225,.9);
+    box-shadow:0 -8px 25px rgba(64,36,50,.06);
+    align-items:center
+  }
+  .footer .right{flex:1}
+  #prevBtn{min-width:82px}
+  #nextBtn{width:100%;min-height:46px;font-size:12px}
+
+  .toast{
+    left:12px;right:12px;bottom:88px;
+    width:auto;text-align:center;font-size:11px
+  }
+
+  .settings-page{padding-bottom:12px}
+  .settings-hero{border-radius:14px;padding:11px 12px}
+  .settings-hero h3{font-size:16px}
+}
+
+@media(max-width:420px){
+  .main{padding-left:10px;padding-right:10px}
+  .mobile-header{margin-left:-10px;margin-right:-10px;padding-left:10px;padding-right:10px}
+  .agent-toggle button{font-size:9px;padding:7px 6px}
+  #prevBtn{min-width:72px;padding-left:8px;padding-right:8px}
+  .head h3{font-size:18px}
+}
+
 </style>
 </head>
 <body>
@@ -314,7 +627,21 @@ textarea{width:100%;border:1px solid var(--line);border-radius:9px;min-height:56
     <div class="side-note">Prototype 模擬版：知識檢索、文件分析、競品發查、多場會議逐字稿／日期分析、即時問題與流程圖皆使用固定情境假資料；不連接真實知識庫或後端。</div>
   </aside>
 
+
+  <div class="mobile-backdrop" id="mobileBackdrop"></div>
   <main class="main">
+    <div class="mobile-header">
+      <div class="mobile-head-left">
+        <button class="mobile-menu" id="mobileNavToggle" aria-label="開啟流程">☰</button>
+        <div class="mobile-mini-logo">彤</div>
+        <div class="mobile-head-copy">
+          <b>彤靈談心</b>
+          <span id="mobileStepLabel">Step 1 · 需求說明</span>
+        </div>
+      </div>
+      <button class="mobile-prd" id="mobilePrdBtn">PRD</button>
+    </div>
+
     <div class="top"><h2 id="workspaceTitle">需求定版工作台</h2><span class="pill" id="runtimePill">Mock Mode · Phase 1</span></div>
     <section class="hero" id="workflowHero">
       <div class="hero-main"><div class="kicker">AGENT-ASSISTED REQUIREMENT WORKFLOW</div><h3>完整流程保留，但不必每一步都自己做。</h3><p>彤靈仍依照需求說明、知識檢索、補充資料、會議、分析、確認、流程／架構、PRD、下載的完整流程工作；Agent 會替你操作能代辦的步驟，只有真正需要人類決策或跨單位討論時才停下來找你。</p></div>
@@ -338,10 +665,7 @@ textarea{width:100%;border:1px solid var(--line);border-radius:9px;min-height:56
     <section class="agent-mode-bar" id="agentModeBar">
       <div class="agent-mode-main">
         <div class="agent-orb">AI</div>
-        <div>
-          <b>Workflow Agent</b>
-          <p>Agent 不會把 v12 的功能刪掉，而是替你走流程。預設「Agent 代辦」；任何一步都可切回手動操作。</p>
-        </div>
+        <div><b>彤靈 Agent</b></div>
       </div>
       <div class="agent-actions">
         <div class="agent-toggle">
@@ -1362,6 +1686,14 @@ const pages=[...document.querySelectorAll('.page')],nav=[...document.querySelect
 
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.__tt);window.__tt=setTimeout(()=>t.classList.remove('show'),1800)}
 function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+async function waitUntil(predicate,timeout=4000,interval=80){
+  const started=Date.now();
+  while(Date.now()-started<timeout){
+    if(predicate()) return true;
+    await sleep(interval);
+  }
+  throw new Error('等待 UI 狀態逾時');
+}
 function setAgentStep(i,text,cls=''){
   const el=document.getElementById('agentStep'+i);if(!el)return;
   el.textContent=text;el.className='agent-step-status'+(cls?' '+cls:'');
@@ -1384,6 +1716,24 @@ document.getElementById('agentModeBtn').onclick=()=>setMode('agent');
 document.getElementById('manualModeBtn').onclick=()=>setMode('manual');
 document.getElementById('pauseAgentBtn').onclick=()=>{agentPaused=!agentPaused;document.getElementById('pauseAgentBtn').textContent=agentPaused?'繼續':'暫停';setAgentCurrent(agentPaused?'Agent 已暫停':'Agent 已恢復',agentPaused?'你可以手動查看／處理任何一步。':'Agent 將從目前流程狀態繼續。',agentPaused?'PAUSED':'READY')};
 
+
+const stepNames=['需求說明','知識檢索','補充資料／競品','會議助理','AI 分析','人工確認','流程／架構','預覽 PRD','下載 PRD'];
+
+function openMobileNav(){
+  document.querySelector('.sidebar')?.classList.add('mobile-open');
+  document.getElementById('mobileBackdrop')?.classList.add('show');
+}
+function closeMobileNav(){
+  document.querySelector('.sidebar')?.classList.remove('mobile-open');
+  document.getElementById('mobileBackdrop')?.classList.remove('show');
+}
+const mobileNavToggle=document.getElementById('mobileNavToggle');
+const mobileBackdrop=document.getElementById('mobileBackdrop');
+const mobilePrdBtn=document.getElementById('mobilePrdBtn');
+if(mobileNavToggle) mobileNavToggle.onclick=openMobileNav;
+if(mobileBackdrop) mobileBackdrop.onclick=closeMobileNav;
+if(mobilePrdBtn) mobilePrdBtn.onclick=()=>go(7);
+
 function go(i){
   if(i>=1&&!requirementReady)return toast('先輸入需求說明，或上傳需求說明文件');
   if(i>=2&&(!knowledgeSearchDone||knowledgeSelectedCount()===0))return toast('請先完成知識檢索，並加入至少 1 份相關知識');
@@ -1395,6 +1745,9 @@ function go(i){
   current=Math.max(0,Math.min(8,i));
   pages.forEach((p,j)=>p.classList.toggle('active',j===current));
   nav.forEach((b,j)=>{b.classList.toggle('active',j===current);b.classList.toggle('done',j<current)});
+  const mobileLabel=document.getElementById('mobileStepLabel');
+  if(mobileLabel) mobileLabel.textContent=`Step ${current+1} · ${stepNames[current]}`;
+  closeMobileNav();
   renderFooter();renderGuide();window.scrollTo({top:0,behavior:'smooth'});
 }
 const nextLabels=['下一步：知識檢索 →','下一步：補充資料與競品 →','下一步：會議助理 →','下一步：AI 分析 →','下一步：人工確認 →','下一步：流程／架構 →','下一步：預覽 PRD →','下一步：下載 PRD →','完成'];
@@ -1424,7 +1777,7 @@ function renderFooter(){
   n.textContent=nextLabels[current];
   n.disabled=(current===0&&!requirementReady)||(current===1&&(!knowledgeSearchDone||knowledgeSelectedCount()===0))||(current===3&&!meetingDone)||(current===4&&!analysisDone)||(current===5&&!flowGenerated)||(current===6&&!flowConfirmed)||(current===7&&!prdApproved);
 }
-nav.forEach(b=>b.onclick=()=>go(+b.dataset.step));
+nav.forEach(b=>b.onclick=()=>{go(+b.dataset.step);if(window.innerWidth<=780)closeMobileNav()});
 document.getElementById('prevBtn').onclick=()=>go(current-1);
 document.getElementById('nextBtn').onclick=()=>current===8?toast('流程已完成'):go(current+1);
 
@@ -1448,11 +1801,20 @@ async function runAgentWorkflow(){
     if(!knowledgeSearchDone||knowledgeSelectedCount()===0){
       setAgentStep(1,'處理中','running');setAgentCurrent('Step 2｜自動知識檢索','正在依需求產 Query、搜尋規範／歷史 PRD／系統規格，並以版本、Owner、Authority 過濾。');
       go(1);
-      document.getElementById('genKbQuery').click();
+      document.getElementById('generateKbQuery').click();
       document.getElementById('runKbSearch').click();
-      await sleep(1450);
+
+      // Wait until the mock knowledge-search UI has actually completed.
+      // This avoids depending on a hard-coded delay and prevents the Agent
+      // from advancing before the result panel is ready.
+      await waitUntil(
+        () => !document.getElementById('kbResults').classList.contains('hidden'),
+        4000,
+        80
+      );
+
       document.getElementById('loadRecommendedKb').click();
-      await sleep(250);
+      await waitUntil(() => knowledgeSelectedCount() >= 4, 2000, 60);
     }
     setAgentStep(1,'Agent 已代辦','');
 
@@ -1500,7 +1862,13 @@ async function runAgentWorkflow(){
 
     await agentAfterMeeting();
   }catch(err){
-    console.error(err);setAgentCurrent('Agent 執行中斷','Prototype 模擬發生錯誤；可切換手動模式繼續原 v12 流程。','ERROR');agentRunning=false;
+    console.error(err);
+    setAgentCurrent(
+      'Agent 執行中斷',
+      '執行目前流程時發生錯誤：'+(err?.message||'未知錯誤')+'。你仍可切換手動模式繼續原 v12 流程。',
+      'ERROR'
+    );
+    agentRunning=false;
   }
 }
 
@@ -2752,6 +3120,7 @@ updateRuntimeSummary();
 renderGuide();updateRequirementReady();
 setMode('agent');
 setAgentCurrent('等待需求輸入','先完成 Step 1。完整 9 步流程都會保留，Agent 只替你減少操作。','READY');
+if(document.getElementById('mobileStepLabel'))document.getElementById('mobileStepLabel').textContent='Step 1 · 需求說明';
 
 </script>
 </body>
