@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>彤靈談心｜Prototype v16.2｜Agent-Assisted Requirement Workflow</title>
+<title>彤靈談心｜Prototype v16.3｜Agent-Assisted Requirement Workflow</title>
 <style>
 :root{
   --ink:#261b25;--muted:#7b6f77;--paper:#fff9f6;--panel:#fff;--line:#eadce1;
@@ -598,6 +598,104 @@ textarea{width:100%;border:1px solid var(--line);border-radius:9px;min-height:56
   .agent-toggle button{font-size:9px;padding:7px 6px}
   #prevBtn{min-width:72px;padding-left:8px;padding-right:8px}
   .head h3{font-size:18px}
+}
+
+
+/* v16.3 — proactive Agent interruption modal */
+.agent-interrupt-overlay{
+  position:fixed;inset:0;z-index:220;
+  display:none;align-items:center;justify-content:center;
+  padding:18px;background:rgba(35,23,31,.42);backdrop-filter:blur(4px)
+}
+.agent-interrupt-overlay.show{display:flex}
+.agent-interrupt{
+  width:min(720px,96vw);max-height:88vh;overflow:auto;
+  background:#fff;border:1px solid var(--line);border-radius:20px;
+  box-shadow:0 28px 80px rgba(42,27,40,.24);padding:16px
+}
+.agent-interrupt-head{
+  display:flex;justify-content:space-between;gap:12px;align-items:flex-start
+}
+.agent-interrupt-head .mark{
+  width:38px;height:38px;border-radius:12px;
+  background:linear-gradient(135deg,var(--aqua),var(--rose));
+  color:#fff;display:grid;place-items:center;font-weight:900;flex:none
+}
+.agent-interrupt-title{min-width:0;flex:1}
+.agent-interrupt-title .eyebrow{
+  font-size:8px;letter-spacing:1.4px;font-weight:900;color:var(--rose);margin-bottom:3px
+}
+.agent-interrupt-title h3{font-size:16px;line-height:1.35;margin:0}
+.agent-interrupt-title p{font-size:9.3px;line-height:1.55;color:var(--muted);margin:5px 0 0}
+.agent-interrupt-close{
+  width:32px;height:32px;border:0;border-radius:10px;background:#f3eef0;color:var(--ink);cursor:pointer
+}
+.agent-interrupt-body{margin-top:12px}
+.agent-interrupt-summary{
+  border:1px solid #d7eae6;background:#f6fcfb;border-radius:12px;padding:10px;
+  font-size:9px;line-height:1.55;color:#405f5b
+}
+.agent-interrupt-warn{
+  border-color:#ead19a;background:#fff9ec;color:#71562d
+}
+.agent-interrupt-evidence{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:9px
+}
+.agent-interrupt-evidence .ev{
+  border:1px solid var(--line);border-radius:10px;padding:8px;background:#fff
+}
+.agent-interrupt-evidence .ev b{display:block;font-size:8.7px}
+.agent-interrupt-evidence .ev span{display:block;font-size:7.9px;color:var(--muted);line-height:1.4;margin-top:2px}
+.agent-interrupt-actions{
+  display:flex;gap:8px;flex-wrap:wrap;margin-top:13px
+}
+.agent-interrupt-actions .btn.primary{min-width:160px}
+.agent-interrupt-actions .btn{min-height:42px}
+.interrupt-slots{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:10px
+}
+.interrupt-slot{
+  border:1px solid var(--line);border-radius:11px;padding:9px;background:#fff;cursor:pointer;text-align:left
+}
+.interrupt-slot.selected{border-color:var(--aqua);background:#f2fbfa}
+.interrupt-slot b{display:block;font-size:9px}
+.interrupt-slot span{display:block;font-size:8px;color:var(--muted);margin-top:2px}
+.interrupt-people{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.interrupt-person{border:1px solid var(--line);border-radius:999px;padding:5px 7px;background:#faf8f9;font-size:8px;font-weight:900}
+.interrupt-edit{display:none;margin-top:9px}
+.interrupt-edit.show{display:block}
+.interrupt-edit textarea{
+  width:100%;min-height:90px;border:1px solid var(--line);border-radius:10px;padding:9px;font-size:14px;line-height:1.5
+}
+.agent-interrupt-foot{
+  margin-top:10px;font-size:8px;line-height:1.45;color:var(--muted)
+}
+@media(max-width:780px){
+  .agent-interrupt-overlay{
+    align-items:flex-end;padding:0
+  }
+  .agent-interrupt{
+    width:100%;max-height:88dvh;border-radius:22px 22px 0 0;
+    padding:15px 14px calc(16px + env(safe-area-inset-bottom))
+  }
+  .agent-interrupt-title h3{font-size:17px}
+  .agent-interrupt-title p{font-size:11px}
+  .agent-interrupt-summary{font-size:11px}
+  .agent-interrupt-evidence{grid-template-columns:1fr}
+  .agent-interrupt-evidence .ev b{font-size:10px}
+  .agent-interrupt-evidence .ev span{font-size:9.5px}
+  .interrupt-slots{grid-template-columns:1fr}
+  .interrupt-slot{min-height:54px}
+  .interrupt-slot b{font-size:11px}
+  .interrupt-slot span{font-size:9.5px}
+  .agent-interrupt-actions{
+    display:grid;grid-template-columns:1fr;gap:8px
+  }
+  .agent-interrupt-actions .btn,
+  .agent-interrupt-actions .btn.primary{
+    width:100%;min-height:48px;font-size:12px
+  }
+  .interrupt-edit textarea{font-size:16px}
 }
 
 </style>
@@ -1673,6 +1771,24 @@ textarea{width:100%;border:1px solid var(--line);border-radius:9px;min-height:56
     </section>
   </main>
 </div>
+
+<div class="agent-interrupt-overlay" id="agentInterruptOverlay" role="dialog" aria-modal="true" aria-labelledby="agentInterruptTitle">
+  <div class="agent-interrupt">
+    <div class="agent-interrupt-head">
+      <div class="mark">AI</div>
+      <div class="agent-interrupt-title">
+        <div class="eyebrow" id="agentInterruptEyebrow">彤靈需要你</div>
+        <h3 id="agentInterruptTitle">需要你的決定</h3>
+        <p id="agentInterruptDesc"></p>
+      </div>
+      <button class="agent-interrupt-close" id="agentInterruptClose" aria-label="關閉">×</button>
+    </div>
+    <div class="agent-interrupt-body" id="agentInterruptBody"></div>
+    <div class="agent-interrupt-actions" id="agentInterruptActions"></div>
+    <div class="agent-interrupt-foot" id="agentInterruptFoot">你關閉後仍可從目前 Step 找回此事項；Agent 不會把未決事項當成已完成。</div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1686,6 +1802,173 @@ const pages=[...document.querySelectorAll('.page')],nav=[...document.querySelect
 
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.__tt);window.__tt=setTimeout(()=>t.classList.remove('show'),1800)}
 function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+
+let agentInterruptType=null;
+
+function closeAgentInterrupt(){
+  document.getElementById('agentInterruptOverlay')?.classList.remove('show');
+  agentInterruptType=null;
+}
+function openAgentInterrupt({type,eyebrow='彤靈需要你',title,desc='',body='',actions=[],foot=''}){
+  agentInterruptType=type;
+  document.getElementById('agentInterruptEyebrow').textContent=eyebrow;
+  document.getElementById('agentInterruptTitle').textContent=title;
+  document.getElementById('agentInterruptDesc').textContent=desc;
+  document.getElementById('agentInterruptBody').innerHTML=body;
+  const actionsEl=document.getElementById('agentInterruptActions');
+  actionsEl.innerHTML='';
+  actions.forEach(a=>{
+    const btn=document.createElement('button');
+    btn.className='btn'+(a.primary?' primary':'')+(a.dark?' dark':'');
+    btn.textContent=a.label;
+    btn.onclick=a.onClick;
+    actionsEl.appendChild(btn);
+  });
+  document.getElementById('agentInterruptFoot').textContent=foot||'你關閉後仍可從目前 Step 找回此事項；Agent 不會把未決事項當成已完成。';
+  document.getElementById('agentInterruptOverlay').classList.add('show');
+}
+document.getElementById('agentInterruptClose').onclick=closeAgentInterrupt;
+document.getElementById('agentInterruptOverlay').addEventListener('click',e=>{
+  if(e.target.id==='agentInterruptOverlay')closeAgentInterrupt();
+});
+
+function showRequirementInputInterrupt(){
+  openAgentInterrupt({
+    type:'REQUIREMENT_INPUT',
+    eyebrow:'需要需求起點',
+    title:'先告訴彤靈這次要做什麼',
+    desc:'Agent 還沒有足夠資訊開始代辦後續流程。',
+    body:`<div class="agent-interrupt-summary">只需要一段需求說明或一份需求文件。完成後，Agent 會自己判斷哪些 Step 要代辦、哪些可以略過使用者操作。</div>`,
+    actions:[
+      {label:'前往輸入需求',primary:true,onClick:()=>{closeAgentInterrupt();go(0);setTimeout(()=>document.getElementById('requirementText')?.focus(),200)}},
+      {label:'選擇需求文件',onClick:()=>{closeAgentInterrupt();go(0);setTimeout(()=>document.getElementById('requirementFileInput')?.click(),200)}},
+      {label:'切換手動模式',onClick:()=>{closeAgentInterrupt();setMode('manual');go(0)}}
+    ]
+  });
+}
+
+function renderMeetingInterruptSlots(){
+  document.querySelectorAll('#agentInterruptBody .interrupt-slot').forEach(slot=>{
+    slot.onclick=()=>{
+      document.querySelectorAll('#agentInterruptBody .interrupt-slot').forEach(x=>x.classList.remove('selected'));
+      slot.classList.add('selected');
+      agentSelectedSlot={start:slot.dataset.start,end:slot.dataset.end,label:slot.dataset.label};
+    };
+  });
+}
+
+function showMeetingRequiredInterrupt(){
+  const body=`
+    <div class="agent-interrupt-summary agent-interrupt-warn"><b>為什麼停下來？</b><br>APP 每日交易限額同時牽涉業務範圍、風控政策與系統能力。現有 Evidence 已查完，繼續搜尋的價值低於讓權責角色一起收斂。</div>
+    <div class="interrupt-people">
+      <span class="interrupt-person">PM</span><span class="interrupt-person">信用卡業務 Owner</span><span class="interrupt-person">風控 Owner</span><span class="interrupt-person">SA</span>
+    </div>
+    <div class="agent-interrupt-evidence">
+      <div class="ev"><b>要解決</b><span>是否設 APP 專屬每日限額、限額數值、控管位置／參數化方式。</span></div>
+      <div class="ev"><b>已準備</b><span>Agenda、Pre-read、Expected Decisions、Directory role mapping。</span></div>
+    </div>
+    <div class="interrupt-slots">
+      <button class="interrupt-slot selected" data-start="20261020T140000" data-end="20261020T143000" data-label="2026/10/20 14:00–14:30"><b>10/20 14:00–14:30</b><span>4 / 4 可參加 · 建議</span></button>
+      <button class="interrupt-slot" data-start="20261021T103000" data-end="20261021T110000" data-label="2026/10/21 10:30–11:00"><b>10/21 10:30–11:00</b><span>4 / 4 可參加</span></button>
+      <button class="interrupt-slot" data-start="20261021T150000" data-end="20261021T153000" data-label="2026/10/21 15:00–15:30"><b>10/21 15:00–15:30</b><span>3 / 4 可參加 · 有衝突</span></button>
+    </div>`;
+  openAgentInterrupt({
+    type:'MEETING_REQUIRED',
+    eyebrow:'需要跨角色決策',
+    title:'彤靈建議安排一場需求決策會議',
+    desc:'你不用自己往 Step 4 找問題；直接在這裡決定下一步。',
+    body,
+    actions:[
+      {label:'確認會議並等待',primary:true,onClick:()=>{
+        closeAgentInterrupt();
+        // synchronize the page-level slot selection for audit visibility
+        document.querySelectorAll('.calendar-slot').forEach(x=>x.classList.toggle('selected',x.dataset.label===agentSelectedSlot.label));
+        document.getElementById('confirmAgentMeeting').click();
+      }},
+      {label:'先下載 .ics',onClick:()=>downloadAgentIcs()},
+      {label:'改由我手動處理',onClick:()=>{closeAgentInterrupt();setMode('manual');go(3)}}
+    ],
+    foot:'Calendar 採 Free/Busy First；Agent 不會讀取無關會議內容，正式邀請仍保留 Human Confirm。'
+  });
+  renderMeetingInterruptSlots();
+}
+
+function showWaitingMeetingInterrupt(){
+  openAgentInterrupt({
+    type:'WAITING_MEETING',
+    eyebrow:'已暫停，不需要守著畫面',
+    title:'等待需求決策會議',
+    desc:`已安排 ${agentSelectedSlot.label}。Agent 已保存目前流程與分析狀態。`,
+    body:`<div class="agent-interrupt-summary">會議記錄到位後，Agent 會從 Step 4 / 5 Resume，只更新受影響的 Requirement、Impact 與 PRD，不會從 Step 1 重跑。</div>`,
+    actions:[
+      {label:'模擬會議已完成並繼續',primary:true,onClick:()=>{closeAgentInterrupt();document.getElementById('simulateAgentMeeting').click()}},
+      {label:'下載邀請 .ics',onClick:()=>downloadAgentIcs()},
+      {label:'稍後再處理',onClick:()=>closeAgentInterrupt()}
+    ],
+    foot:'正式版可由 Calendar / Meeting Connector 在事件或紀錄到位時自動喚醒 Agent。'
+  });
+}
+
+function showAccountDecisionInterrupt(){
+  const body=`
+    <div class="agent-interrupt-summary agent-interrupt-warn"><b>R01｜Phase 1 入帳帳戶</b><br>AI 建議：Phase 1 僅允許正卡持卡人將預借款項撥入本人本行活存帳戶。</div>
+    <div class="agent-interrupt-evidence">
+      <div class="ev"><b>原需求／10/01</b><span>本人指定帳戶。</span></div>
+      <div class="ev"><b>SA／10/08</b><span>現行核心僅支援本人本行活存。</span></div>
+      <div class="ev"><b>10/15 Decision</b><span>Phase 1 本人本行活存。</span></div>
+      <div class="ev"><b>為何需要你</b><span>這不是單純文字整理，而是相較原需求的 Scope Change。</span></div>
+    </div>
+    <div class="interrupt-edit" id="accountInterruptEdit">
+      <textarea id="accountInterruptText">Phase 1 僅允許正卡持卡人將預借款項撥入本人本行活存帳戶。</textarea>
+      <div class="actions"><button class="btn primary" id="applyAccountInterruptEdit">套用修改</button></div>
+    </div>`;
+  openAgentInterrupt({
+    type:'ACCOUNT_SCOPE',
+    eyebrow:'只剩 1 個人工例外',
+    title:'請確認入帳帳戶 Scope',
+    desc:'OTP 與每日限額已由 Agent / 會議收斂，現在不需要你自己往 Step 6 找這張卡片。',
+    body,
+    actions:[
+      {label:'接受 Agent 建議',primary:true,onClick:()=>{
+        closeAgentInterrupt();
+        document.querySelector('.decision[data-key="account"] .choice[data-value="accept"]').click();
+      }},
+      {label:'我要修改',onClick:()=>{
+        document.getElementById('accountInterruptEdit').classList.add('show');
+        setTimeout(()=>document.getElementById('accountInterruptText')?.focus(),80);
+      }},
+      {label:'查看完整人工確認頁',onClick:()=>{closeAgentInterrupt();go(5)}}
+    ],
+    foot:'此決策會寫入 Requirement Decision 與 Traceability；Agent 不會自行把 Scope Change 視為已確認。'
+  });
+  const apply=document.getElementById('applyAccountInterruptEdit');
+  if(apply)apply.onclick=()=>{
+    const text=document.getElementById('accountInterruptText').value.trim();
+    if(!text)return toast('請先輸入修改後需求');
+    const card=document.querySelector('.decision[data-key="account"]');
+    card.querySelector('.choice[data-value="modify"]').click();
+    const edit=card.querySelector('.edit');
+    edit.value=text;
+    edit.dispatchEvent(new Event('input',{bubbles:true}));
+    closeAgentInterrupt();
+  };
+}
+
+function showPrdReviewInterrupt(){
+  openAgentInterrupt({
+    type:'PRD_REVIEW',
+    eyebrow:'最後一個 Human Gate',
+    title:'PRD 草稿已完成，請做最後審閱',
+    desc:'Agent 已完成流程／架構與 PRD 組裝。接下來不需要再找其他問題，只要確認成品。',
+    body:`<div class="agent-interrupt-summary"><b>目前狀態</b><br>需求、Meeting Timeline、Impact、Open Issues 與 Traceability 已組裝進 PRD。正式下載前仍保留你的最終確認。</div>`,
+    actions:[
+      {label:'前往審閱 PRD',primary:true,onClick:()=>{closeAgentInterrupt();go(7)}},
+      {label:'稍後審閱',onClick:()=>closeAgentInterrupt()}
+    ],
+    foot:'確認 PRD 後，Step 9 會直接提供 PRD.docx 下載。'
+  });
+}
+
 async function waitUntil(predicate,timeout=4000,interval=80){
   const started=Date.now();
   while(Date.now()-started<timeout){
@@ -1791,7 +2074,9 @@ async function runAgentWorkflow(){
   if(!requirementReady){
     setAgentStep(0,'需要你','human');
     setAgentCurrent('還缺需求起點','請先輸入至少 10 個字的需求說明，或上傳需求文件。','WAITING_HUMAN');
-    go(0);return;
+    go(0);
+    showRequirementInputInterrupt();
+    return;
   }
   agentRunning=true;
   document.getElementById('agentDashboard').classList.add('show');
@@ -1857,6 +2142,7 @@ async function runAgentWorkflow(){
       go(3);
       document.getElementById('agentMeetingPlan').classList.add('show');
       agentRunning=false;
+      showMeetingRequiredInterrupt();
       return;
     }
 
@@ -1899,6 +2185,7 @@ async function agentAfterMeeting(){
   setAgentCurrent('Step 6｜只留下 1 個真正需要你決定的例外','OTP 已有充分一致 Evidence；每日限額已由追加會議明確決議。只剩「入帳帳戶」屬原始 Scope Change，需要你確認。','WAITING_HUMAN');
   document.getElementById('agentHumanNote').innerHTML='<b>Agent 已把人工確認從 3 項縮成 1 項</b><p>R02 OTP：依權威 Evidence 自動整理為 Draft。O01 每日限額：已由 10/20 會議取得人類正式決議。你只需處理 R01 Scope Change；完成後 Agent 會自動接手 Step 7～8。</p>';
   go(5);agentRunning=false;
+  setTimeout(showAccountDecisionInterrupt,160);
 }
 
 async function agentContinueAfterHuman(){
@@ -1918,6 +2205,7 @@ async function agentContinueAfterHuman(){
   setAgentStep(7,'請你最後審閱','human');
   setAgentCurrent('Step 8｜PRD 已產生','Agent 已完成流程／架構與 PRD 草稿。請你做最後審閱；確認後即可進 Step 9 下載。','WAITING_HUMAN');
   agentRunning=false;
+  setTimeout(showPrdReviewInterrupt,180);
 }
 
 document.getElementById('startAgentBtn').onclick=runAgentWorkflow;
@@ -2463,6 +2751,7 @@ document.getElementById('confirmAgentMeeting').onclick=()=>{
   setAgentStep(3,'WAITING_MEETING','wait');setAgentStep(4,'暫停','wait');
   setAgentCurrent('WAITING_MEETING','Agent 已保存目前 Requirement Matrix、Evidence 與流程狀態。會議結果加入後從 Step 4/5 Resume。','WAITING_MEETING');
   toast('已確認會議草稿，Agent 進入 WAITING_MEETING');
+  setTimeout(showWaitingMeetingInterrupt,180);
 };
 document.getElementById('simulateAgentMeeting').onclick=()=>{
   const m={
