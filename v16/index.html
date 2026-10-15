@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>彤靈談心｜Prototype v16.6｜Mobile-native Agent Session UI</title>
+<title>彤靈談心｜Prototype v16.7｜Resumable Agent Session UI</title>
 <style>
 :root{
   --ink:#261b25;--muted:#7b6f77;--paper:#fff9f6;--panel:#fff;--line:#eadce1;
@@ -1620,6 +1620,80 @@ body.agent-immersive-mode .agent-interrupt-actions .btn.primary{
   .agent-message-user{padding-left:28px}
 }
 
+
+/* v16.7 — stable/resumable state UX */
+.mode-transition-overlay{
+  position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;
+  pointer-events:none;opacity:0;visibility:hidden;
+  background:rgba(15,17,20,.26);backdrop-filter:blur(4px);
+  transition:opacity .18s ease,visibility .18s ease
+}
+.mode-transition-overlay.show{opacity:1;visibility:visible}
+.mode-transition-card{
+  display:flex;align-items:center;gap:9px;padding:10px 13px;
+  border-radius:12px;background:rgba(23,26,30,.94);
+  border:1px solid rgba(255,255,255,.08);color:#e9edf0;
+  box-shadow:0 15px 45px rgba(0,0,0,.22)
+}
+.mode-transition-card b{font-size:10px}
+.mode-transition-spinner{
+  width:15px;height:15px;border-radius:50%;
+  border:2px solid #465058;border-top-color:#63cfc6;
+  animation:modeSpin .7s linear infinite
+}
+@keyframes modeSpin{to{transform:rotate(360deg)}}
+
+.agent-session,
+.shell,
+.sidebar,
+.agent-mode-bar{
+  transition:opacity .18s ease,transform .18s ease
+}
+body.mode-switching .agent-session,
+body.mode-switching .shell,
+body.mode-switching .sidebar,
+body.mode-switching .agent-mode-bar{
+  opacity:.45
+}
+.agent-task,.agent-tool-card,.agent-work-banner,.agent-run-badge{
+  transition:background .2s ease,border-color .2s ease,opacity .2s ease,color .2s ease
+}
+
+/* Persistent affordance when a decision was dismissed but remains blocking. */
+.agent-work-banner.pending-decision{
+  border-color:#5a4325!important;
+  background:rgba(38,29,17,.96)!important;
+  cursor:pointer
+}
+.agent-work-banner.pending-decision .agent-live-dot{background:#d8a65e}
+.agent-work-banner.pending-decision .agent-work-left b{color:#e3c99e}
+.agent-work-banner.pending-decision .agent-work-stop{
+  color:#e3c99e;font-weight:900
+}
+
+/* Manual takeover banner gives context instead of a hard visual jump. */
+.manual-resume-banner{
+  display:none;
+  border:1px solid #d8e8e4;background:#f6fcfb;border-radius:12px;
+  padding:9px 10px;margin-bottom:9px
+}
+body:not(.agent-immersive-mode) .manual-resume-banner.show{display:flex}
+.manual-resume-banner{
+  justify-content:space-between;gap:10px;align-items:center
+}
+.manual-resume-banner b{font-size:9px}
+.manual-resume-banner span{display:block;font-size:8px;color:var(--muted);margin-top:2px}
+.manual-resume-banner .btn{flex:none}
+
+@media(max-width:820px){
+  .mode-transition-card{padding:9px 11px}
+  .manual-resume-banner{
+    margin:0 0 9px;border-radius:13px;padding:9px
+  }
+  .manual-resume-banner b{font-size:10px}
+  .manual-resume-banner span{font-size:9px}
+}
+
 </style>
 </head>
 <body>
@@ -2127,6 +2201,11 @@ body.agent-immersive-mode .agent-interrupt-actions .btn.primary{
         </div>
       </div>
     </section>
+
+    <div class="manual-resume-banner" id="manualResumeBanner">
+      <div><b id="manualResumeTitle">Agent 已安全暫停</b><span id="manualResumeText">你可以查看或修改目前流程；完成後可交還 Agent 從這裡繼續。</span></div>
+      <button class="btn primary" id="manualResumeAgentBtn">交還 Agent</button>
+    </div>
 
     <section class="shell" id="workflowShell">
       <section class="panel">
@@ -2810,13 +2889,21 @@ body.agent-immersive-mode .agent-interrupt-actions .btn.primary{
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="mode-transition-overlay" id="modeTransitionOverlay" aria-hidden="true">
+      <div class="mode-transition-card">
+        <div class="mode-transition-spinner"></div>
+        <b id="modeTransitionText">切換工作模式…</b>
+      </div>
+    </div>
+    <div class="toast" id="toast"></div>
 
 <script>
 const files=[];
 const state={account:null,otp:null,limit:null,edits:{account:'',otp:'',limit:''}};
 let current=0,requirementReady=false,requirementMode=null,requirementFileName='',knowledgeSearchDone=false,competitorResearchDone=false,meetingStarted=false,meetingTranscriptDone=false,meetingDone=false,analysisDone=false,flowGenerated=false,flowConfirmed=false,prdGenerated=false,prdApproved=false;
 let agentMode=true,agentPaused=false,agentRunning=false,agentMeetingRequired=false,agentMeetingResolved=false,agentResumePending=false;
+let agentMeetingScheduled=false,agentPostMeetingApplied=false,agentPendingInterruption=null;
+let agentRunEpoch=0,agentDirtyFromStep=null,agentProgressMax=0,agentRuntimeStatus='READY';
 let agentSelectedSlot={start:'20261020T140000',end:'20261020T143000',label:'2026/10/20 14:00–14:30'};
 
 const pages=[...document.querySelectorAll('.page')],nav=[...document.querySelectorAll('#nav button')];
@@ -2892,7 +2979,9 @@ function renderAgentTasks(){
 
   let done=0;
   s.forEach(x=>{if(['DONE','AGENT_DONE','HUMAN_DONE','SKIPPED'].includes(x))done++});
-  const pct=Math.round(done/9*100);
+  const rawPct=Math.round(done/9*100);
+  agentProgressMax=Math.max(agentProgressMax,rawPct);
+  const pct=agentProgressMax;
   const bar=document.getElementById('immersiveProgressBar'); if(bar)bar.style.width=pct+'%';
   const pctEl=document.getElementById('immersiveProgressPct'); if(pctEl)pctEl.textContent=pct+'%';
 }
@@ -2930,10 +3019,13 @@ function applyAgentVisualMode(){
 }
 function setImmersiveStep(i,text,cls=''){
   let state='NOT_STARTED';
-  if(/完成|已代辦|已審閱|可下載/.test(text))state='AGENT_DONE';
+  if(cls==='wait')state='WAIT';
+  else if(cls==='human')state='HUMAN';
+  else if(cls==='running')state='RUNNING';
+  else if(/完成|已代辦|已審閱|可下載/.test(text))state='AGENT_DONE';
   else if(/處理中|分析中|重新分析/.test(text))state='RUNNING';
   else if(/需要你|需要追加會議|請你/.test(text))state='HUMAN';
-  else if(/等待|WAITING|暫停/.test(text))state='WAIT';
+  else if(/等待|WAITING|暫停|blocker/.test(text))state='WAIT';
   else if(/不需要|Skip|略過/.test(text))state='SKIPPED';
   immersiveStepStates[i]=state;
 
@@ -2952,14 +3044,249 @@ function setImmersiveStep(i,text,cls=''){
   renderAgentTasks();
 }
 
+
+class AgentControlSignal extends Error{
+  constructor(message='CONTROLLED_STOP'){super(message);this.name='AgentControlSignal'}
+}
+function computeAgentResumePlan(s){
+  if(!s.requirementReady)return {kind:'WAIT_REQUIREMENT',step:0};
+  if(s.prdApproved)return {kind:'COMPLETE',step:8};
+
+  if(s.dirtyFromStep!==null&&s.dirtyFromStep!==undefined){
+    if(s.dirtyFromStep>=7&&s.prdGenerated)return {kind:'PRD_REVIEW',step:7};
+    if(s.dirtyFromStep>=5&&s.analysisDone&&s.allDecisions)return {kind:'POST_HUMAN',step:6};
+    if(s.dirtyFromStep>=5&&s.meetingResolved)return {kind:'POST_MEETING',step:5};
+    const earliest=!s.knowledgeReady?1:(!s.supplementReady?2:(!s.meetingDone?3:4));
+    return {kind:'PIPELINE',step:Math.min(Math.max(1,s.dirtyFromStep),earliest===4?4:Math.max(earliest,s.dirtyFromStep))};
+  }
+
+  if(s.prdGenerated&&s.flowConfirmed&&!s.prdApproved)return {kind:'PRD_REVIEW',step:7};
+  if(s.analysisDone&&s.allDecisions&&!s.flowConfirmed)return {kind:'POST_HUMAN',step:6};
+  if(s.meetingResolved)return {kind:'POST_MEETING',step:4};
+  if(s.meetingScheduled)return {kind:'WAITING_MEETING',step:3};
+  if(s.meetingRequired||(s.analysisDone&&!s.meetingResolved))return {kind:'MEETING_REQUIRED',step:3};
+
+  if(!s.knowledgeReady)return {kind:'PIPELINE',step:1};
+  if(!s.supplementReady)return {kind:'PIPELINE',step:2};
+  if(!s.meetingDone)return {kind:'PIPELINE',step:3};
+  if(!s.analysisDone)return {kind:'PIPELINE',step:4};
+  return {kind:'PIPELINE',step:4};
+}
+function reconcileAgentExternalState(){
+  const manualDecisionMeeting=meetingRecords.some(m=>
+    m.status==='CONFIRMED' &&
+    m.date>'2026-10-15' &&
+    (m.decisions||[]).some(x=>/限額|每日/.test(x))
+  );
+  if(manualDecisionMeeting){
+    agentMeetingResolved=true;
+    agentMeetingScheduled=false;
+    agentMeetingRequired=false;
+  }
+}
+function getAgentSnapshot(){
+  reconcileAgentExternalState();
+  return {
+    requirementReady,
+    knowledgeReady:knowledgeSearchDone&&knowledgeSelectedCount()>0,
+    supplementReady:files.some(f=>f.name==='03_APP預借現金_SA_v0.3.docx'),
+    meetingDone,
+    prdApproved,
+    prdGenerated,
+    flowConfirmed,
+    analysisDone,
+    allDecisions:['account','otp','limit'].every(completeDecision),
+    meetingResolved:agentMeetingResolved,
+    meetingScheduled:agentMeetingScheduled,
+    meetingRequired:agentMeetingRequired,
+    dirtyFromStep:agentDirtyFromStep
+  };
+}
+function beginAgentRun(status='RUNNING'){
+  agentRunEpoch+=1;
+  agentRunning=true;
+  agentPaused=false;
+  agentRuntimeStatus=status;
+  return agentRunEpoch;
+}
+function ensureAgentRun(epoch){
+  if(epoch!==agentRunEpoch)throw new AgentControlSignal('STALE_RUN');
+  if(agentPaused)throw new AgentControlSignal('PAUSED');
+  if(!agentMode)throw new AgentControlSignal('MANUAL_TAKEOVER');
+}
+async function agentWait(ms,epoch){
+  const started=Date.now();
+  while(Date.now()-started<ms){
+    ensureAgentRun(epoch);
+    await sleep(Math.min(80,ms-(Date.now()-started)));
+  }
+  ensureAgentRun(epoch);
+}
+async function agentWaitUntil(predicate,timeout=4000,interval=80,epoch){
+  const started=Date.now();
+  while(Date.now()-started<timeout){
+    if(epoch!==undefined)ensureAgentRun(epoch);
+    if(predicate())return true;
+    await sleep(interval);
+  }
+  throw new Error('等待 UI 狀態逾時');
+}
+function invalidateCurrentAgentRun(reason='CONTROL'){
+  agentRunEpoch+=1;
+  agentRunning=false;
+  agentRuntimeStatus=reason;
+}
+function setAgentPaused(paused){
+  agentPaused=paused;
+  if(paused){
+    invalidateCurrentAgentRun('PAUSED');
+    setAgentCurrent('Agent 已暫停','流程狀態與 Evidence 已保存。恢復後會從目前 checkpoint 繼續。','PAUSED');
+  }else{
+    agentRuntimeStatus='READY';
+    setAgentCurrent('Agent 已恢復','正在重新判斷目前 checkpoint，不會從頭重跑。','READY');
+    if(agentMode)setTimeout(resumeAgentFromState,120);
+  }
+  syncPauseButtons();
+}
+function syncPauseButtons(){
+  ['immersivePauseBtn','pauseAgentBtn'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.textContent=agentPaused?'繼續':'暫停';
+  });
+  const stop=document.getElementById('agentWorkStop');
+  if(stop&&!agentPendingInterruption)stop.textContent=agentPaused?'繼續':'暫停';
+}
+function showModeTransition(text){
+  const o=document.getElementById('modeTransitionOverlay');
+  const t=document.getElementById('modeTransitionText');
+  if(t)t.textContent=text;
+  document.body.classList.add('mode-switching');
+  if(o)o.classList.add('show');
+}
+function hideModeTransition(){
+  const o=document.getElementById('modeTransitionOverlay');
+  if(o)o.classList.remove('show');
+  document.body.classList.remove('mode-switching');
+}
+function relevantManualStep(){
+  const p=computeAgentResumePlan(getAgentSnapshot());
+  if(p.kind==='PRD_REVIEW')return 7;
+  if(p.kind==='POST_HUMAN')return 6;
+  if(['POST_MEETING','MEETING_REQUIRED','WAITING_MEETING'].includes(p.kind))return p.kind==='POST_MEETING'?5:3;
+  return Math.max(0,Math.min(8,p.step||current||0));
+}
+function updateManualResumeBanner(){
+  const banner=document.getElementById('manualResumeBanner');
+  if(!banner)return;
+  const step=relevantManualStep();
+  banner.classList.toggle('show',!agentMode);
+  document.getElementById('manualResumeTitle').textContent=`Agent 已停在 Step ${step+1} · ${stepNames[step]}`;
+  document.getElementById('manualResumeText').textContent=
+    agentDirtyFromStep!==null
+      ? '你已修改流程內容；切回 Agent 後會從受影響的最早步驟重新檢查。'
+      : '你可以查看或修改；切回 Agent 後會從目前 checkpoint 繼續。';
+}
+function announceInterruption(type,text,meta){
+  if(agentPendingInterruption!==type)agentAppendMessage('assistant',text,meta);
+}
+function surfacePendingInterruption(){
+  const plan=computeAgentResumePlan(getAgentSnapshot());
+  if(plan.kind==='MEETING_REQUIRED')return showMeetingRequiredInterrupt();
+  if(plan.kind==='WAITING_MEETING')return showWaitingMeetingInterrupt();
+  if(plan.kind==='POST_MEETING'){
+    if(agentPostMeetingApplied && !completeDecision('account'))return showAccountDecisionInterrupt();
+    return resumeAgentFromState();
+  }
+  if(plan.kind==='PRD_REVIEW')return showPrdReviewInterrupt();
+  if(!requirementReady)return showRequirementInputInterrupt();
+}
+async function resumeAgentFromState(){
+  if(!agentMode||agentPaused||agentRunning)return;
+  const plan=computeAgentResumePlan(getAgentSnapshot());
+  const interruptionKinds={
+    MEETING_REQUIRED:'MEETING_REQUIRED',
+    WAITING_MEETING:'WAITING_MEETING',
+    PRD_REVIEW:'PRD_REVIEW'
+  };
+  if(interruptionKinds[plan.kind]!==agentPendingInterruption){
+    if(!interruptionKinds[plan.kind] && plan.kind!=='POST_MEETING')agentPendingInterruption=null;
+  }
+  updatePendingDecisionBanner();
+
+  if(plan.kind==='WAIT_REQUIREMENT'){
+    setAgentCurrent('等待需求','請在下方輸入這次想處理的需求。','WAITING_HUMAN');
+    return;
+  }
+  if(plan.kind==='COMPLETE'){
+    setAgentStep(8,'可下載','');
+    setAgentCurrent('PRD 已完成','完整需求流程已完成，可直接下載 PRD。','PRD_READY');
+    document.getElementById('immersiveDownloadBtn')?.classList.add('show');
+    return;
+  }
+  if(plan.kind==='PRD_REVIEW'){
+    setAgentCurrent('PRD 等待最終確認','草稿已完成，只差你的最終確認。','WAITING_HUMAN');
+    return setTimeout(showPrdReviewInterrupt,100);
+  }
+  if(plan.kind==='POST_HUMAN'){
+    return agentContinueAfterHuman();
+  }
+  if(plan.kind==='POST_MEETING'){
+    return agentAfterMeeting();
+  }
+  if(plan.kind==='WAITING_MEETING'){
+    setAgentCurrent('等待需求決策會議',`已安排 ${agentSelectedSlot.label}；會議結果到位後會自動 Resume。`,'WAITING_MEETING');
+    return setTimeout(showWaitingMeetingInterrupt,100);
+  }
+  if(plan.kind==='MEETING_REQUIRED'){
+    agentMeetingRequired=true;
+    setAgentCurrent('需要跨角色決策','APP 每日限額需要業務、風控與 SA 共同收斂。','WAITING_HUMAN');
+    return setTimeout(showMeetingRequiredInterrupt,100);
+  }
+  return runAgentWorkflow();
+}
+function updatePendingDecisionBanner(){
+  const banner=document.getElementById('agentWorkBanner');
+  const btn=document.getElementById('agentWorkStop');
+  if(!banner||!btn)return;
+  const pending=!!agentPendingInterruption;
+  banner.classList.toggle('pending-decision',pending);
+  if(pending)btn.textContent='查看';
+  else syncPauseButtons();
+}
+function markManualMutation(step){
+  if(agentMode)return;
+  agentDirtyFromStep=agentDirtyFromStep===null?step:Math.min(agentDirtyFromStep,step);
+
+  if(step<=0){
+    knowledgeSearchDone=false;
+    analysisDone=false;flowGenerated=false;flowConfirmed=false;prdGenerated=false;prdApproved=false;
+    agentMeetingRequired=false;
+  }else if(step<=4){
+    analysisDone=false;flowGenerated=false;flowConfirmed=false;prdGenerated=false;prdApproved=false;
+    agentMeetingRequired=false;
+  }else if(step===5){
+    flowGenerated=false;flowConfirmed=false;prdGenerated=false;prdApproved=false;
+  }else if(step===6){
+    flowConfirmed=false;prdGenerated=false;prdApproved=false;
+  }else if(step===7){
+    prdApproved=false;
+  }
+  updateManualResumeBanner();
+}
+
 let agentInterruptType=null;
 
-function closeAgentInterrupt(){
+function closeAgentInterrupt(resolved=false){
   document.getElementById('agentInterruptOverlay')?.classList.remove('show');
-  agentInterruptType=null;
+  if(resolved){
+    agentInterruptType=null;
+    agentPendingInterruption=null;
+  }
+  updatePendingDecisionBanner();
 }
 function openAgentInterrupt({type,eyebrow='彤靈需要你',title,desc='',body='',actions=[],foot=''}){
   agentInterruptType=type;
+  agentPendingInterruption=type;
+  updatePendingDecisionBanner();
   document.getElementById('agentInterruptEyebrow').textContent=eyebrow;
   document.getElementById('agentInterruptTitle').textContent=title;
   document.getElementById('agentInterruptDesc').textContent=desc;
@@ -2976,9 +3303,9 @@ function openAgentInterrupt({type,eyebrow='彤靈需要你',title,desc='',body='
   document.getElementById('agentInterruptFoot').textContent=foot||'你關閉後仍可從目前 Step 找回此事項；Agent 不會把未決事項當成已完成。';
   document.getElementById('agentInterruptOverlay').classList.add('show');
 }
-document.getElementById('agentInterruptClose').onclick=closeAgentInterrupt;
+document.getElementById('agentInterruptClose').onclick=()=>closeAgentInterrupt(false);
 document.getElementById('agentInterruptOverlay').addEventListener('click',e=>{
-  if(e.target.id==='agentInterruptOverlay')closeAgentInterrupt();
+  if(e.target.id==='agentInterruptOverlay')closeAgentInterrupt(false);
 });
 
 function showRequirementInputInterrupt(){
@@ -2997,7 +3324,7 @@ function renderMeetingInterruptSlots(){
 }
 
 function showMeetingRequiredInterrupt(){
-  agentAppendMessage('assistant','目前沒有足夠 Evidence 可以安全決定 APP 每日交易限額。我需要你確認是否安排跨單位決策會議。','需要決策');
+  announceInterruption('MEETING_REQUIRED','目前沒有足夠 Evidence 可以安全決定 APP 每日交易限額。我需要你確認是否安排跨單位決策會議。','需要決策');
   const body=`
     <div class="agent-interrupt-summary agent-interrupt-warn"><b>為什麼停下來？</b><br>APP 每日交易限額同時牽涉業務範圍、風控政策與系統能力。現有 Evidence 已查完，繼續搜尋的價值低於讓權責角色一起收斂。</div>
     <div class="interrupt-people">
@@ -3020,7 +3347,7 @@ function showMeetingRequiredInterrupt(){
     body,
     actions:[
       {label:'確認會議並等待',primary:true,onClick:()=>{
-        closeAgentInterrupt();
+        closeAgentInterrupt(true);
         // synchronize the page-level slot selection for audit visibility
         document.querySelectorAll('.calendar-slot').forEach(x=>x.classList.toggle('selected',x.dataset.label===agentSelectedSlot.label));
         document.getElementById('confirmAgentMeeting').click();
@@ -3034,7 +3361,7 @@ function showMeetingRequiredInterrupt(){
 }
 
 function showWaitingMeetingInterrupt(){
-  agentAppendMessage('assistant',`會議已安排：${agentSelectedSlot.label}。我已暫停受影響工作，其他狀態已保存。`,'等待中');
+  announceInterruption('WAITING_MEETING',`會議已安排：${agentSelectedSlot.label}。我已暫停受影響工作，其他狀態已保存。`,'等待中');
   openAgentInterrupt({
     type:'WAITING_MEETING',
     eyebrow:'已暫停，不需要守著畫面',
@@ -3042,7 +3369,7 @@ function showWaitingMeetingInterrupt(){
     desc:`已安排 ${agentSelectedSlot.label}。Agent 已保存目前流程與分析狀態。`,
     body:`<div class="agent-interrupt-summary">會議記錄到位後，Agent 會從 Step 4 / 5 Resume，只更新受影響的 Requirement、Impact 與 PRD，不會從 Step 1 重跑。</div>`,
     actions:[
-      {label:'模擬會議已完成並繼續',primary:true,onClick:()=>{closeAgentInterrupt();document.getElementById('simulateAgentMeeting').click()}},
+      {label:'模擬會議已完成並繼續',primary:true,onClick:()=>{closeAgentInterrupt(true);document.getElementById('simulateAgentMeeting').click()}},
       {label:'下載邀請 .ics',onClick:()=>downloadAgentIcs()},
       {label:'稍後再處理',onClick:()=>closeAgentInterrupt()}
     ],
@@ -3051,7 +3378,7 @@ function showWaitingMeetingInterrupt(){
 }
 
 function showAccountDecisionInterrupt(){
-  agentAppendMessage('assistant','只剩 1 個需要你判斷的 Scope Change：Phase 1 入帳帳戶。','需要決策');
+  announceInterruption('ACCOUNT_SCOPE','只剩 1 個需要你判斷的 Scope Change：Phase 1 入帳帳戶。','需要決策');
   const body=`
     <div class="agent-interrupt-summary agent-interrupt-warn"><b>R01｜Phase 1 入帳帳戶</b><br>AI 建議：Phase 1 僅允許正卡持卡人將預借款項撥入本人本行活存帳戶。</div>
     <div class="agent-interrupt-evidence">
@@ -3072,14 +3399,14 @@ function showAccountDecisionInterrupt(){
     body,
     actions:[
       {label:'接受 Agent 建議',primary:true,onClick:()=>{
-        closeAgentInterrupt();
+        closeAgentInterrupt(true);
         document.querySelector('.decision[data-key="account"] .choice[data-value="accept"]').click();
       }},
       {label:'我要修改',onClick:()=>{
         document.getElementById('accountInterruptEdit').classList.add('show');
         setTimeout(()=>document.getElementById('accountInterruptText')?.focus(),80);
       }},
-      {label:'查看完整人工確認頁',onClick:()=>{closeAgentInterrupt();go(5)}}
+      {label:'查看完整人工確認頁',onClick:()=>{closeAgentInterrupt(false);setMode('manual');setTimeout(()=>go(5),180)}}
     ],
     foot:'此決策會寫入 Requirement Decision 與 Traceability；Agent 不會自行把 Scope Change 視為已確認。'
   });
@@ -3092,12 +3419,12 @@ function showAccountDecisionInterrupt(){
     const edit=card.querySelector('.edit');
     edit.value=text;
     edit.dispatchEvent(new Event('input',{bubbles:true}));
-    closeAgentInterrupt();
+    closeAgentInterrupt(true);
   };
 }
 
 function showPrdReviewInterrupt(){
-  agentAppendMessage('assistant','PRD 草稿已組裝完成。現在只差你的最終確認。','最終審閱');
+  announceInterruption('PRD_REVIEW','PRD 草稿已組裝完成。現在只差你的最終確認。','最終審閱');
   openAgentInterrupt({
     type:'PRD_REVIEW',
     eyebrow:'最後一個 Human Gate',
@@ -3106,13 +3433,13 @@ function showPrdReviewInterrupt(){
     body:`<div class="agent-interrupt-summary"><b>已完成</b><br>需求整理、Meeting Timeline、Impact、Open Issues、Traceability 與流程／架構均已組裝進 PRD。</div>`,
     actions:[
       {label:'確認 PRD 完成',primary:true,onClick:()=>{
-        closeAgentInterrupt();
+        closeAgentInterrupt(true);
         document.getElementById('approvePrd').click();
       }},
       {label:'查看完整 PRD',onClick:()=>{
-        closeAgentInterrupt();
+        closeAgentInterrupt(false);
         setMode('manual');
-        go(7);
+        setTimeout(()=>go(7),180);
       }},
       {label:'稍後再確認',onClick:()=>closeAgentInterrupt()}
     ],
@@ -3135,27 +3462,56 @@ function setAgentStep(i,text,cls=''){
   if(text && !/待規劃|Agent$|視情況/.test(text))immersiveLog(`Step ${i+1} · ${stepNames[i]}：${text}`,/需要|WAIT|等待|暫停/.test(text)?'!':'✓');
 }
 function setAgentCurrent(title,text,state='RUNNING'){
+  agentRuntimeStatus=state;
   document.getElementById('agentDashboard').classList.add('show');
   document.getElementById('agentCurrentTitle').textContent=title;
   document.getElementById('agentCurrentText').textContent=text;
   document.getElementById('agentRunState').textContent=state;
   setImmersiveStatus(title,text,state);
+  updatePendingDecisionBanner();
 }
 function setMode(mode){
-  agentMode=mode==='agent';
-  document.getElementById('agentModeBtn').classList.toggle('active',agentMode);
-  document.getElementById('manualModeBtn').classList.toggle('active',!agentMode);
-  document.getElementById('startAgentBtn').textContent=agentMode?'交給彤靈繼續':'切回 Agent 才能自動代辦';
-  if(!agentMode){
-    agentPaused=true;agentRunning=false;
-    setAgentCurrent('已切換手動模式','完整 9 步流程都還在；你可以逐步查看與操作。','MANUAL');
-  }else{
-    agentPaused=false;
-    setAgentCurrent(requirementReady?'Agent 已接手':'等待需求',requirementReady?'我會從目前狀態繼續執行；需要你時會主動跳出決策窗。':'在下方輸入需求即可開始。','READY');
+  const target=mode==='agent';
+  if(target===agentMode){
+    applyAgentVisualMode();
+    updateManualResumeBanner();
+    return;
   }
+
+  if(!target){
+    showModeTransition('正在安全交接到手動流程…');
+    invalidateCurrentAgentRun('MANUAL_TAKEOVER');
+    agentMode=false;
+    document.getElementById('agentModeBtn').classList.remove('active');
+    document.getElementById('manualModeBtn').classList.add('active');
+    document.getElementById('startAgentBtn').textContent='交還 Agent 繼續';
+    applyAgentVisualMode();
+    const step=relevantManualStep();
+    setTimeout(()=>{
+      go(step);
+      setAgentCurrent('手動檢視中',`Agent checkpoint 已保存於 Step ${step+1} · ${stepNames[step]}。`,'MANUAL');
+      updateManualResumeBanner();
+      hideModeTransition();
+    },140);
+    return;
+  }
+
+  showModeTransition('正在交還 Agent，恢復目前進度…');
+  agentMode=true;
+  agentPaused=false;
+  document.getElementById('agentModeBtn').classList.add('active');
+  document.getElementById('manualModeBtn').classList.remove('active');
+  document.getElementById('startAgentBtn').textContent='交給彤靈繼續';
   applyAgentVisualMode();
+  updateManualResumeBanner();
+  setAgentCurrent('正在恢復工作','彤靈正在依目前 Requirement、Evidence 與已完成步驟找回 checkpoint。','RESUMING');
+  setTimeout(()=>{
+    hideModeTransition();
+    resumeAgentFromState();
+  },180);
 }
 document.getElementById('agentModeBtn').onclick=()=>setMode('agent');
+document.getElementById('manualResumeAgentBtn').onclick=()=>setMode('agent');
 
 document.getElementById('agentFocusToggle').onclick=()=>{
   agentShowDetails=!agentShowDetails;
@@ -3163,14 +3519,11 @@ document.getElementById('agentFocusToggle').onclick=()=>{
   document.getElementById('agentFocusToggle').textContent=agentShowDetails?'Focus':'活動';
 };
 document.getElementById('agentWorkStop').onclick=()=>{
-  agentPaused=!agentPaused;
-  document.getElementById('immersivePauseBtn').textContent=agentPaused?'繼續':'暫停';
-  document.getElementById('agentWorkStop').textContent=agentPaused?'繼續':'暫停';
-  if(agentPaused)setAgentCurrent('Agent 已暫停','流程狀態與 Evidence 已保存。','PAUSED');
-  else{setAgentCurrent('Agent 已恢復','會從目前狀態繼續，不重做已完成工作。','READY');runAgentWorkflow()}
+  if(agentPendingInterruption)return surfacePendingInterruption();
+  setAgentPaused(!agentPaused);
 };
 document.getElementById('agentAttachBtn').onclick=()=>{
-  setMode('manual');go(0);setTimeout(()=>document.getElementById('requirementFileInput')?.click(),120);
+  document.getElementById('requirementFileInput')?.click();
 };
 function autoGrowComposer(){
   const ta=document.getElementById('agentComposerInput');
@@ -3190,35 +3543,33 @@ document.getElementById('agentComposerSend').onclick=()=>{
     if(text.length<10){toast('需求請至少輸入 10 個字');return}
     const target=document.getElementById('requirementText');
     target.value=text;target.dispatchEvent(new Event('input',{bubbles:true}));
-    immersiveStepStates[0]='AGENT_DONE';renderAgentTasks();
-    agentAppendMessage('assistant','收到。我先建立處理計畫，接著會自行查資料、分析需求並更新 PRD。','彤靈');
-    setTimeout(runAgentWorkflow,180);
+    immersiveStepStates[0]='HUMAN_DONE';renderAgentTasks();
+    agentAppendMessage('assistant','收到。我會從目前需求建立 Evidence 與處理流程。','彤靈');
+    setTimeout(resumeAgentFromState,160);
     return;
   }
+
+  if(agentPendingInterruption){
+    agentAppendMessage('assistant','補充資訊已記錄。這個事項仍需要你的明確決定，我已保留原決策狀態。','已補充');
+    return setTimeout(surfacePendingInterruption,220);
+  }
+
   if(agentRunning){
-    agentAppendMessage('assistant','已收到補充指示。我會在下一個安全的工具邊界採納，不會中斷目前正在執行的動作。','已排入');
+    agentAppendMessage('assistant','已收到補充指示。我會在目前動作完成後重新評估，不會突然中斷正在寫入的工具交易。','已排入');
     return;
   }
-  agentAppendMessage('assistant','收到補充資訊。我會依目前流程狀態重新判斷下一個必要動作。','彤靈');
-  setTimeout(runAgentWorkflow,160);
+
+  agentAppendMessage('assistant','收到。我會從目前 checkpoint 重新判斷下一個必要動作。','彤靈');
+  setTimeout(resumeAgentFromState,160);
 };
 
 
 document.getElementById('immersiveManualBtn').onclick=()=>{setMode('manual');toast('已切換手動模式')};
 document.getElementById('immersiveContinueBtn').onclick=()=>runAgentWorkflow();
-document.getElementById('immersivePauseBtn').onclick=()=>{
-  agentPaused=!agentPaused;
-  document.getElementById('immersivePauseBtn').textContent=agentPaused?'繼續':'暫停';
-  if(agentPaused){
-    setAgentCurrent('Agent 已暫停','目前流程與 Evidence 已保存；你可以稍後繼續。','PAUSED');
-  }else{
-    setAgentCurrent('Agent 已恢復','會從目前狀態繼續，不重做已完成工作。','READY');
-    runAgentWorkflow();
-  }
-};
+document.getElementById('immersivePauseBtn').onclick=()=>setAgentPaused(!agentPaused);
 
 document.getElementById('manualModeBtn').onclick=()=>setMode('manual');
-document.getElementById('pauseAgentBtn').onclick=()=>{agentPaused=!agentPaused;document.getElementById('pauseAgentBtn').textContent=agentPaused?'繼續':'暫停';setAgentCurrent(agentPaused?'Agent 已暫停':'Agent 已恢復',agentPaused?'你可以手動查看／處理任何一步。':'Agent 將從目前流程狀態繼續。',agentPaused?'PAUSED':'READY')};
+document.getElementById('pauseAgentBtn').onclick=()=>setAgentPaused(!agentPaused);
 
 
 const stepNames=['需求說明','知識檢索','補充資料／競品','會議助理','AI 分析','人工確認','流程／架構','預覽 PRD','下載 PRD'];
@@ -3289,146 +3640,232 @@ document.getElementById('nextBtn').onclick=()=>current===8?toast('流程已完�
 
 // v16 Workflow Agent — operates the existing v12 steps instead of replacing them
 async function runAgentWorkflow(){
-  if(!agentMode)return toast('請先切換成 Agent 代辦');
-  if(agentRunning)return toast('Agent 正在處理');
-  if(agentPaused)return toast('Agent 目前已暫停');
+  if(!agentMode)return;
+  if(agentRunning)return;
+  if(agentPaused)return;
+
   if(!requirementReady){
     setAgentStep(0,'需要你','human');
     setAgentCurrent('等待需求','請在下方輸入這次想處理的需求。','WAITING_HUMAN');
-    showRequirementInputInterrupt();
     return;
   }
-  agentRunning=true;
+
+  const epoch=beginAgentRun('RUNNING');
   document.getElementById('agentDashboard').classList.add('show');
   setAgentStep(0,'完成','');
+
   try{
+    // If manual edits invalidated upstream content, restart only from affected capability.
+    const dirty=agentDirtyFromStep;
+
     // Step 2 Knowledge
-    if(!knowledgeSearchDone||knowledgeSelectedCount()===0){
-      setAgentStep(1,'處理中','running');setAgentCurrent('Step 2｜自動知識檢索','正在依需求產 Query、搜尋規範／歷史 PRD／系統規格，並以版本、Owner、Authority 過濾。');
-      go(1);
-      document.getElementById('generateKbQuery').click();
-      document.getElementById('runKbSearch').click();
-
-      // Wait until the mock knowledge-search UI has actually completed.
-      // This avoids depending on a hard-coded delay and prevents the Agent
-      // from advancing before the result panel is ready.
-      await waitUntil(
-        () => !document.getElementById('kbResults').classList.contains('hidden'),
-        4000,
-        80
-      );
-
-      document.getElementById('loadRecommendedKb').click();
-      await waitUntil(() => knowledgeSelectedCount() >= 4, 2000, 60);
+    if(dirty===null || dirty<=1){
+      if(!knowledgeSearchDone||knowledgeSelectedCount()===0){
+        setAgentStep(1,'處理中','running');
+        setAgentCurrent('正在整理企業知識','搜尋規範、歷史 PRD、系統規格，並依版本、Owner、Authority 篩選。','RUNNING');
+        go(1);
+        document.getElementById('generateKbQuery').click();
+        document.getElementById('runKbSearch').click();
+        await agentWaitUntil(()=>!document.getElementById('kbResults').classList.contains('hidden'),4000,80,epoch);
+        document.getElementById('loadRecommendedKb').click();
+        await agentWaitUntil(()=>knowledgeSelectedCount()>=4,2200,60,epoch);
+      }
+      ensureAgentRun(epoch);
+      setAgentStep(1,'Agent 已代辦','');
     }
-    setAgentStep(1,'Agent 已代辦','');
 
-    // Step 3 Supplement / competitor decision
-    setAgentStep(2,'Agent 已代辦','');
-    setAgentCurrent('Step 3｜判斷補充資料','SA 屬必要 Context，Agent 自動補入；競品不影響本次 Phase 1 定版，因此先 Skip。');
-    go(2);
-    if(!files.some(f=>f.name==='03_APP預借現金_SA_v0.3.docx')) document.getElementById('loadSample').click();
-    document.getElementById('stCompetitor').textContent='Agent 判斷不需要';
-    document.getElementById('stCompetitor').className='right-ok';
-    await sleep(500);
-
-    // Step 4 existing meetings
-    setAgentStep(3,'處理既有會議','running');
-    setAgentCurrent('Step 4｜分析既有 Meeting Timeline','先處理既有 10/01、10/08、10/15 會議；只有分析後仍有跨角色 blocker 才安排新會議。');
-    go(3);
-    const latest=meetingById('m-20261015');
-    if(latest && latest.status!=='CONFIRMED'){
-      selectMeeting('m-20261015');
-      document.getElementById('startMeeting').click();
-      await sleep(5100);
-      document.getElementById('finishMeeting').click();
-      await sleep(300);
+    // Step 3 Supplement
+    if(dirty===null || dirty<=2){
+      setAgentStep(2,'處理中','running');
+      setAgentCurrent('正在整理補充資料','確認 SA 與必要 Context；競品只有在會影響本案決策時才執行。','RUNNING');
+      go(2);
+      if(!files.some(f=>f.name==='03_APP預借現金_SA_v0.3.docx'))document.getElementById('loadSample').click();
+      document.getElementById('stCompetitor').textContent='Agent 判斷不需要';
+      document.getElementById('stCompetitor').className='right-ok';
+      await agentWait(280,epoch);
+      setAgentStep(2,'Agent 已代辦','');
     }
-    setAgentStep(3,'既有會議完成','');
 
-    // Step 5 initial analysis
-    setAgentStep(4,'分析中','running');
-    setAgentCurrent('Step 5｜跨來源分析','整合需求、知識、SA 與多場會議，判斷哪些可以直接整理、哪些還需要補 Evidence。');
-    go(4);document.getElementById('runAnalysis').click();
-    await sleep(3450);
-    setAgentStep(4,'已完成','');
-
-    if(!agentMeetingResolved){
-      // loop back to meeting because daily limit is a cross-role decision
-      agentMeetingRequired=true;
-      setAgentStep(3,'需要追加會議','human');
-      setAgentStep(4,'發現 blocker','wait');
-      setAgentCurrent('分析發現需要回到 Step 4','APP 每日限額不是「再查一次」就能回答的問題；需要業務、風控與 SA 共同決策。Agent 已準備議程、參與角色與可用時段。','WAITING_HUMAN');
+    // Step 4 Existing meetings
+    if(dirty===null || dirty<=3 || !meetingDone){
+      setAgentStep(3,'處理中','running');
+      setAgentCurrent('正在整理既有會議','依實際討論日期整理 Decision、Change、Open 與 Action。','RUNNING');
       go(3);
-      document.getElementById('agentMeetingPlan').classList.add('show');
+      const latest=meetingById('m-20261015');
+      if(latest&&latest.status!=='CONFIRMED'){
+        selectMeeting('m-20261015');
+        document.getElementById('startMeeting').click();
+        await agentWait(5200,epoch);
+        document.getElementById('finishMeeting').click();
+        await agentWait(220,epoch);
+      }
+      setAgentStep(3,'既有會議完成','');
+    }
+
+    // Step 5 Analysis
+    if((dirty!==null&&dirty<=4) || !analysisDone){
+      setAgentStep(4,'分析中','running');
+      setAgentCurrent('正在分析需求','跨來源比對需求、規範、SA 與會議，找出衝突與缺口。','RUNNING');
+      go(4);
+      document.getElementById('runAnalysis').click();
+      await agentWaitUntil(()=>analysisDone,5000,80,epoch);
+      setAgentStep(4,'已完成','');
+    }
+
+    ensureAgentRun(epoch);
+
+    if(dirty!==null&&dirty>=5){
+      agentDirtyFromStep=null;
       agentRunning=false;
-      showMeetingRequiredInterrupt();
+      if(['account','otp','limit'].every(completeDecision))return agentContinueAfterHuman();
+      if(agentMeetingResolved)return agentAfterMeeting();
+    }
+
+    agentDirtyFromStep=null;
+
+    if(agentMeetingResolved){
+      agentRunning=false;
+      return agentAfterMeeting();
+    }
+
+    agentMeetingRequired=true;
+    agentMeetingScheduled=false;
+    agentRunning=false;
+    setAgentStep(3,'需要追加會議','human');
+    setAgentStep(4,'等待決策','wait');
+    setAgentCurrent('需要跨角色決策','APP 每日限額需要業務、風控與 SA 共同收斂。','WAITING_HUMAN');
+    go(3);
+    document.getElementById('agentMeetingPlan').classList.add('show');
+    showMeetingRequiredInterrupt();
+  }catch(err){
+    if(err instanceof AgentControlSignal){
+      agentRunning=false;
       return;
     }
-
-    await agentAfterMeeting();
-  }catch(err){
     console.error(err);
-    setAgentCurrent(
-      'Agent 執行中斷',
-      '執行目前流程時發生錯誤：'+(err?.message||'未知錯誤')+'。你仍可切換手動模式繼續原 v12 流程。',
-      'ERROR'
-    );
     agentRunning=false;
+    setAgentCurrent('Agent 執行中斷','執行時發生錯誤：'+(err?.message||'未知錯誤')+'。目前 checkpoint 已保留，可重試或切手動模式。','ERROR');
   }
 }
 
 async function agentAfterMeeting(){
-  agentRunning=true;
-  // Re-run affected analysis only, then step 6 exception review
-  setAgentStep(3,'追加會議完成','');
-  setAgentStep(4,'重新分析','running');
-  setAgentCurrent('Step 5｜Resume 後重新分析','只更新受新會議影響的每日限額、拒絕訊息與 IT Impact，再重新整理 Requirement Matrix。');
-  go(4);document.getElementById('runAnalysis').click();await sleep(3450);
-  setAgentStep(4,'Agent 已代辦','');
+  if(!agentMode)return;
+  if(agentRunning)return;
+  const epoch=beginAgentRun('RESUMING');
 
-  // Evidence-consistent items can be handled by Agent draft; scope change remains human
-  state.otp='accept';
-  const otpCard=document.querySelector('.decision[data-key="otp"]');
-  otpCard.classList.add('agent-auto');
-  otpCard.querySelector('[data-value="accept"]').classList.add('selected');
+  try{
+    if(!agentPostMeetingApplied || !analysisDone || agentDirtyFromStep!==null){
+      setAgentStep(3,'追加會議完成','');
+      setAgentStep(4,'重新分析','running');
+      setAgentCurrent('正在吸收會議結果','只更新受新會議影響的限額、拒絕訊息與 IT Impact。','RESUMING');
+      go(4);
+      document.getElementById('runAnalysis').click();
+      await agentWaitUntil(()=>analysisDone,5000,80,epoch);
+      ensureAgentRun(epoch);
+    }
 
-  state.limit='modify';
-  state.edits.limit='APP 每日預借現金限額：新臺幣 100,000 元；由風控參數控管，SA 新增 APP channel limit parameter。';
-  const limitCard=document.querySelector('.decision[data-key="limit"]');
-  limitCard.classList.add('agent-auto');
-  limitCard.querySelector('[data-value="modify"]').classList.add('selected');
-  const led=limitCard.querySelector('.edit');led.classList.remove('hidden');led.value=state.edits.limit;led.disabled=true;
-  updateGate();
+    // Apply items that no longer require human judgement.
+    if(!completeDecision('otp')){
+      state.otp='accept';
+      const otpCard=document.querySelector('.decision[data-key="otp"]');
+      otpCard.classList.add('agent-auto');
+      otpCard.querySelector('[data-value="accept"]').classList.add('selected');
+    }
+    if(!completeDecision('limit')){
+      state.limit='modify';
+      state.edits.limit='APP 每日預借現金限額：新臺幣 100,000 元；由風控參數控管，SA 新增 APP channel limit parameter。';
+      const limitCard=document.querySelector('.decision[data-key="limit"]');
+      limitCard.classList.add('agent-auto');
+      limitCard.querySelector('[data-value="modify"]').classList.add('selected');
+      const led=limitCard.querySelector('.edit');
+      led.classList.remove('hidden');led.value=state.edits.limit;led.disabled=true;
+    }
+    updateGate();
+    agentPostMeetingApplied=true;
+    agentDirtyFromStep=null;
+    setAgentStep(4,'Agent 已代辦','');
 
-  setAgentStep(5,'需要你 1 項','human');
-  setAgentCurrent('Step 6｜只留下 1 個真正需要你決定的例外','OTP 已有充分一致 Evidence；每日限額已由追加會議明確決議。只剩「入帳帳戶」屬原始 Scope Change，需要你確認。','WAITING_HUMAN');
-  document.getElementById('agentHumanNote').innerHTML='<b>Agent 已把人工確認從 3 項縮成 1 項</b><p>R02 OTP：依權威 Evidence 自動整理為 Draft。O01 每日限額：已由 10/20 會議取得人類正式決議。你只需處理 R01 Scope Change；完成後 Agent 會自動接手 Step 7～8。</p>';
-  go(5);agentRunning=false;
-  setTimeout(showAccountDecisionInterrupt,160);
+    agentRunning=false;
+    if(completeDecision('account')){
+      return agentContinueAfterHuman();
+    }
+
+    setAgentStep(5,'需要你 1 項','human');
+    setAgentCurrent('需要你確認 Scope','OTP 與每日限額已收斂，只剩入帳帳戶屬於相較原需求的 Scope Change。','WAITING_HUMAN');
+    document.getElementById('agentHumanNote').innerHTML='<b>只剩 1 個真正需要人的例外</b><p>OTP 已由 Evidence 收斂；每日限額已有正式會議決議。只需確認 R01 Scope Change。</p>';
+    go(5);
+    showAccountDecisionInterrupt();
+  }catch(err){
+    if(err instanceof AgentControlSignal){agentRunning=false;return}
+    console.error(err);agentRunning=false;
+    setAgentCurrent('Resume 中斷','會議結果已保留，可再次 Resume。','ERROR');
+  }
 }
 
 async function agentContinueAfterHuman(){
-  if(!agentMode||agentRunning||!completeDecision('account')||!completeDecision('otp')||!completeDecision('limit'))return;
-  agentRunning=true;
-  setAgentStep(5,'人工例外完成','');
-  setAgentCurrent('人類決策完成，交還 Agent','彤靈接手剩餘流程：產生流程／架構 → 組裝 PRD → 交給你最後審閱。');
+  if(!agentMode||agentRunning)return;
+  if(!['account','otp','limit'].every(completeDecision)){
+    setAgentCurrent('仍有未決事項','還有必要的人類決策未完成。','WAITING_HUMAN');
+    return surfacePendingInterruption();
+  }
 
-  // use existing v12 buttons/functions
-  document.getElementById('confirmAdvance').click();
-  await sleep(250);
-  setAgentStep(6,'Agent 處理中','running');
-  document.getElementById('generateFlow').click();
-  await sleep(350);
-  document.getElementById('confirmFlow').click();
-  setAgentStep(6,'Agent 已代辦','');
-  setAgentStep(7,'請你最後審閱','human');
-  setAgentCurrent('Step 8｜PRD 已產生','Agent 已完成流程／架構與 PRD 草稿。請你做最後審閱；確認後即可進 Step 9 下載。','WAITING_HUMAN');
-  agentRunning=false;
-  setTimeout(showPrdReviewInterrupt,180);
+  const epoch=beginAgentRun('RUNNING');
+  try{
+    setAgentStep(5,'人工例外完成','');
+    setAgentCurrent('正在完成 PRD 前置作業','需求已收斂，正在建立流程／架構並組裝 PRD。','RUNNING');
+
+    if(!flowGenerated){
+      document.getElementById('confirmAdvance').click();
+      await agentWait(160,epoch);
+      setAgentStep(6,'Agent 處理中','running');
+      document.getElementById('generateFlow').click();
+      await agentWait(260,epoch);
+    }
+    ensureAgentRun(epoch);
+
+    if(!flowConfirmed){
+      document.getElementById('confirmFlow').click();
+      await agentWait(160,epoch);
+    }
+    ensureAgentRun(epoch);
+
+    setAgentStep(6,'Agent 已代辦','');
+    setAgentStep(7,'請你最後審閱','human');
+    agentRunning=false;
+    setAgentCurrent('PRD 草稿已完成','需求、Impact、Open Issues 與 Traceability 已組裝完成。','WAITING_HUMAN');
+    showPrdReviewInterrupt();
+  }catch(err){
+    if(err instanceof AgentControlSignal){agentRunning=false;return}
+    console.error(err);agentRunning=false;
+    setAgentCurrent('PRD 組裝中斷','已完成內容仍保留，可從目前 checkpoint 繼續。','ERROR');
+  }
 }
 
-document.getElementById('startAgentBtn').onclick=runAgentWorkflow;
+document.getElementById('startAgentBtn').onclick=resumeAgentFromState;
+
+const manualMutationClickIds=new Set([
+  'loadRequirementSample','loadRecommendedKb','clearKb','loadSample','addCompetitorSample',
+  'runCompetitor','finishMeeting','addMeeting','runAnalysis','confirmAdvance',
+  'generateFlow','confirmFlow','approvePrd'
+]);
+document.getElementById('workflowShell').addEventListener('input',e=>{
+  if(!agentMode&&e.isTrusted)markManualMutation(current);
+},true);
+document.getElementById('workflowShell').addEventListener('change',e=>{
+  if(!agentMode&&e.isTrusted)markManualMutation(current);
+},true);
+document.getElementById('workflowShell').addEventListener('click',e=>{
+  if(agentMode||!e.isTrusted)return;
+  const target=e.target.closest('button,.choice');
+  if(!target)return;
+  if(target.classList.contains('choice')||manualMutationClickIds.has(target.id)){
+    markManualMutation(current);
+  }
+},true);
+document.getElementById('agentWorkBanner').addEventListener('click',e=>{
+  if(agentPendingInterruption&&e.target.id!=='agentWorkStop')surfacePendingInterruption();
+});
+
 
 // Requirement intake
 const requirementTextEl=document.getElementById('requirementText');
@@ -3466,6 +3903,11 @@ document.getElementById('loadRequirementSample').onclick=()=>{
   toast('已載入本情境需求說明');
 };
 document.getElementById('chooseRequirementFile').onclick=()=>document.getElementById('requirementFileInput').click();
+document.getElementById('requirementFileInput').addEventListener('change',()=>{
+  if(agentMode&&document.getElementById('requirementFileInput').files?.length){
+    setTimeout(resumeAgentFromState,180);
+  }
+});
 document.getElementById('requirementFileInput').onchange=e=>{
   const f=e.target.files&&e.target.files[0];
   if(!f)return;
@@ -3966,12 +4408,15 @@ function downloadAgentIcs(){
 }
 document.getElementById('downloadAgentIcs').onclick=downloadAgentIcs;
 document.getElementById('confirmAgentMeeting').onclick=()=>{
+  closeAgentInterrupt(true);
+  agentMeetingScheduled=true;
+  agentMeetingRequired=false;
+  agentRunning=false;
   document.getElementById('agentMeetingWait').classList.add('show');
-  document.getElementById('agentMeetingWaitText').textContent=`已選 ${agentSelectedSlot.label}。Prototype 模擬：使用 Directory 找到 PM／業務／風控／SA，Calendar 只讀 Free/Busy；真正送出邀請前保留 Human Confirm。`;
-  setAgentStep(3,'WAITING_MEETING','wait');setAgentStep(4,'暫停','wait');
-  setAgentCurrent('WAITING_MEETING','Agent 已保存目前 Requirement Matrix、Evidence 與流程狀態。會議結果加入後從 Step 4/5 Resume。','WAITING_MEETING');
-  toast('已確認會議草稿，Agent 進入 WAITING_MEETING');
-  setTimeout(showWaitingMeetingInterrupt,180);
+  document.getElementById('agentMeetingWaitText').textContent=`已選 ${agentSelectedSlot.label}。Calendar 採 Free/Busy；Agent 會在會議結果到位後 Resume。`;
+  setAgentStep(3,'WAITING_MEETING','wait');setAgentStep(4,'等待會議','wait');
+  setAgentCurrent('等待需求決策會議',`已安排 ${agentSelectedSlot.label}；目前 checkpoint 已保存。`,'WAITING_MEETING');
+  setTimeout(showWaitingMeetingInterrupt,160);
 };
 document.getElementById('simulateAgentMeeting').onclick=()=>{
   const m={
@@ -3990,12 +4435,12 @@ document.getElementById('simulateAgentMeeting').onclick=()=>{
   };
   if(!meetingById(m.id))meetingRecords.push(m);
   addFiles([{name:'MEETING_2026-10-20_每日限額需求決策會議_分析紀錄.txt',size:'Meeting Record'}]);
-  agentMeetingResolved=true;agentMeetingRequired=false;
+  agentMeetingResolved=true;agentMeetingRequired=false;agentMeetingScheduled=false;agentPostMeetingApplied=false;agentPendingInterruption=null;closeAgentInterrupt(true);
   document.getElementById('agentMeetingPlan').classList.remove('show');
   renderMeetingTimeline();selectMeeting(m.id);
   setAgentCurrent('會議結果已加入','彤靈正在 Resume：先重新分析受影響 Topic，再回到原流程。','RESUMING');
   toast('已加入 10/20 會議決議，Agent Resume');
-  setTimeout(()=>agentAfterMeeting(),500);
+  if(agentMode)setTimeout(resumeAgentFromState,320);
 };
 
 // Analysis
@@ -4322,7 +4767,7 @@ function prdInner(){
 function buildPrd(){document.getElementById('prdPreview').innerHTML=prdInner()}
 document.getElementById('backToFlow').onclick=()=>go(6);
 document.getElementById('approvePrd').onclick=()=>{
-  prdApproved=true;renderFooter();
+  prdApproved=true;agentPendingInterruption=null;agentDirtyFromStep=null;renderFooter();
   if(agentMode){
     setAgentStep(7,'已審閱','');
     setAgentStep(8,'可下載','human');
@@ -4640,6 +5085,9 @@ setAgentCurrent('等待需求','在下方輸入需求即可開始。','READY');
 if(document.getElementById('mobileStepLabel'))document.getElementById('mobileStepLabel').textContent='Step 1 · 需求說明';
 applyAgentVisualMode();
 immersiveProgress();
+syncPauseButtons();
+updateManualResumeBanner();
+updatePendingDecisionBanner();
 if(window.matchMedia('(max-width:820px)').matches){
   const manualBtn=document.getElementById('immersiveManualBtn');
   if(manualBtn)manualBtn.textContent='流程';
