@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>彤靈談心｜Prototype v10</title>
+<title>彤靈談心｜Prototype v12</title>
 <style>
 :root{
   --ink:#261b25;--muted:#7b6f77;--paper:#fff9f6;--panel:#fff;--line:#eadce1;
@@ -179,6 +179,95 @@ textarea{width:100%;border:1px solid var(--line);border-radius:9px;min-height:56
 .kb-note{font-size:8.7px;line-height:1.55;color:var(--muted);background:#fffaf0;border:1px solid #ead6aa;border-radius:9px;padding:7px 8px;margin-top:8px}
 @media(max-width:800px){.kb-search{grid-template-columns:1fr}.kb-summary{grid-template-columns:1fr}}
 
+
+/* settings */
+.settings-entry{margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1)}
+.settings-entry button{width:100%;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.055);color:#e8dfe5;border-radius:11px;padding:10px 11px;text-align:left;font-size:10.5px;font-weight:800;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.settings-entry button:hover{background:rgba(255,255,255,.1)}
+.settings-entry .gear{font-size:15px}.settings-entry small{display:block;font-size:8.4px;color:#b9abb4;font-weight:400;margin-top:2px}
+.settings-page{display:none}
+.settings-page.active{display:block}
+.settings-hero{border:1px solid var(--line);border-radius:18px;background:linear-gradient(135deg,#fff7f4,#fff 52%,#edf9f7);box-shadow:var(--shadow);padding:18px;margin-bottom:14px}
+.settings-hero-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.settings-hero h3{font-size:22px;margin:0 0 5px}.settings-hero p{font-size:10px;color:var(--muted);line-height:1.6;margin:0;max-width:800px}
+.settings-runtime{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:13px}
+.runtime-card{border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px}
+.runtime-card small{display:block;color:var(--muted);font-size:8.5px}.runtime-card b{display:block;font-size:11px;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.settings-layout{display:grid;grid-template-columns:205px minmax(0,1fr);gap:12px}
+.settings-tabs{border:1px solid var(--line);background:#fff;border-radius:15px;padding:8px;height:max-content;position:sticky;top:15px}
+.settings-tab{width:100%;border:0;background:transparent;text-align:left;border-radius:9px;padding:9px 10px;font-size:9.8px;color:#62565e;margin:2px 0}
+.settings-tab.active{background:var(--roseSoft);color:var(--rose);font-weight:900}
+.settings-pane{display:none}.settings-pane.active{display:block}
+.settings-panel{border:1px solid var(--line);background:#fff;border-radius:15px;padding:15px;box-shadow:0 8px 24px rgba(64,36,50,.045)}
+.settings-panel+.settings-panel{margin-top:10px}
+.settings-panel h4{margin:0 0 4px;font-size:13px}.settings-panel>p{margin:0 0 11px;font-size:9.5px;line-height:1.55;color:var(--muted)}
+.provider-section-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:13px 0 7px}
+.provider-section-title b{font-size:10px}.provider-section-title span{font-size:8.5px;color:var(--muted)}
+.provider-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.provider-card{position:relative;border:1px solid var(--line);border-radius:12px;background:#fff;padding:11px;cursor:pointer;transition:.15s}
+.provider-card:hover{border-color:#d6bcc5;transform:translateY(-1px)}
+.provider-card.selected{border-color:var(--rose);background:#fff7f8;box-shadow:0 0 0 2px rgba(201,79,103,.08)}
+.provider-card input{position:absolute;opacity:0;pointer-events:none}
+.provider-card .provider-name{font-size:10.8px;font-weight:900;display:flex;align-items:center;justify-content:space-between;gap:6px}
+.provider-card .provider-name span{font-size:8px;border-radius:999px;padding:3px 6px;background:#f4f1f2;color:#6e6269}
+.provider-card p{font-size:8.8px;line-height:1.45;color:var(--muted);margin:6px 0 0}
+.provider-card .cost{margin-top:7px;font-size:8.4px;font-weight:800;color:#7b6f77}
+.provider-card.local .provider-name span{background:var(--greenSoft);color:#2e7357}
+.provider-card.gateway .provider-name span{background:var(--aquaSoft);color:#28776e}
+.setting-grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.setting-grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:9px;font-weight:900;color:#5d5058}
+.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:9px;background:#fff;padding:8px 9px;font-size:9.7px;color:var(--ink)}
+.field textarea{min-height:84px;margin:0}
+.field small{font-size:8.2px;color:var(--muted);line-height:1.4}
+.input-with-button{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px}
+.switch-row{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid #f0e8eb;padding:9px 0}
+.switch-row:last-child{border-bottom:0}
+.switch-copy b{font-size:9.8px;display:block}.switch-copy span{display:block;font-size:8.6px;line-height:1.45;color:var(--muted);margin-top:2px}
+.toggle{position:relative;width:38px;height:22px;flex:none}.toggle input{opacity:0;width:0;height:0}.slider{position:absolute;inset:0;background:#ded5d9;border-radius:999px;transition:.2s}.slider:before{content:"";position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;box-shadow:0 2px 5px rgba(0,0,0,.16);transition:.2s}.toggle input:checked+.slider{background:var(--rose)}.toggle input:checked+.slider:before{transform:translateX(16px)}
+.route-table{width:100%;min-width:650px;border-collapse:collapse;font-size:9px}.route-table th,.route-table td{padding:7px;border-bottom:1px solid #eee5e8}.route-table select,.route-table input{width:100%;border:1px solid var(--line);border-radius:7px;padding:6px;font-size:8.8px}
+.preset-row{display:flex;gap:7px;flex-wrap:wrap}
+.preset{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 10px;font-size:9px;font-weight:900}.preset:hover{border-color:#d6aeb7}.preset.local-first{background:#f4fbf7;border-color:#cbe5d8;color:#326f57}.preset.bank{background:#fff8ef;border-color:#edd9b6;color:#7e5a25}
+.settings-footer{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:12px;border-top:1px solid var(--line);padding-top:12px}
+.save-status{font-size:8.8px;color:var(--muted)}
+.test-result{margin-top:8px;border-radius:9px;padding:8px 9px;font-size:9px;line-height:1.5;display:none}
+.test-result.show{display:block}.test-result.ok{background:var(--greenSoft);color:#2d6f54}.test-result.warn{background:var(--amberSoft);color:#80591f}.test-result.bad{background:var(--roseSoft);color:#963648}
+.privacy-callout{border:1px solid #ead8aa;background:#fffaf0;border-radius:11px;padding:9px 10px;font-size:9px;line-height:1.5;color:#725322;margin-bottom:9px}
+.cost-bar{height:8px;background:#f0e8eb;border-radius:999px;overflow:hidden;margin-top:6px}.cost-bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--amber));transition:.2s}
+.advanced-note{font-size:8.6px;color:var(--muted);line-height:1.5;background:#faf7f8;border:1px dashed var(--line);border-radius:9px;padding:8px}
+@media(max-width:1050px){.provider-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.settings-layout{grid-template-columns:1fr}.settings-tabs{position:static;display:flex;overflow:auto}.settings-tab{width:auto;white-space:nowrap}.settings-runtime{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:720px){.provider-grid,.setting-grid2,.setting-grid3{grid-template-columns:1fr}.settings-runtime{grid-template-columns:1fr}.settings-hero-top{flex-direction:column}}
+
+
+/* v12 multi-meeting */
+.meeting-manager{display:grid;grid-template-columns:330px minmax(0,1fr);gap:10px;margin-bottom:10px}
+.meeting-list-card{border:1px solid var(--line);border-radius:14px;background:#fff;padding:11px}
+.meeting-list-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;margin-bottom:8px}
+.meeting-list-head h4{margin:0 0 3px;font-size:12px}
+.meeting-timeline{display:flex;flex-direction:column;gap:7px}
+.meeting-row{border:1px solid var(--line);background:#fff;border-radius:11px;padding:9px;cursor:pointer;transition:.15s}
+.meeting-row:hover{border-color:#d8bec6}
+.meeting-row.active{border-color:var(--aqua);background:#f5fcfb;box-shadow:0 0 0 2px rgba(99,207,198,.08)}
+.meeting-row-top{display:flex;justify-content:space-between;gap:7px;align-items:flex-start}
+.meeting-row time{font-size:9.2px;font-weight:900;color:#6f5f68}
+.meeting-row b{font-size:9.8px;display:block;margin-top:3px;line-height:1.35}
+.meeting-row .meeting-meta{font-size:8.4px;color:var(--muted);margin-top:4px;line-height:1.4}
+.date-chip{display:inline-flex;align-items:center;border-radius:999px;background:#f3eef0;color:#6d5f67;padding:3px 6px;font-size:8px;font-weight:900}
+.meeting-add-form{border:1px dashed #d9c3ca;background:#fff9fa;border-radius:11px;padding:9px;margin-top:8px}
+.meeting-add-form textarea{min-height:85px}
+.meeting-selected{border:1px solid var(--line);border-radius:14px;background:#fff;padding:11px}
+.meeting-selected-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:8px}
+.meeting-selected-head h4{margin:0 0 3px;font-size:12px}
+.meeting-selected-meta{font-size:8.8px;color:var(--muted);line-height:1.45}
+.temporal-rule{border:1px solid #cfe8e3;background:#f6fcfb;border-radius:11px;padding:9px 10px;font-size:9px;line-height:1.55;color:#406a65;margin-top:8px}
+.temporal-table{width:100%;border-collapse:collapse;font-size:9px;min-width:900px}
+.temporal-table th,.temporal-table td{padding:7px;border-bottom:1px solid #eee5e8;vertical-align:top;line-height:1.45}
+.temporal-current{background:#f5fbf9}
+.temporal-arrow{color:#9a8b93;padding:0 3px}
+.meeting-source-badge{font-size:8px;border-radius:999px;padding:3px 6px;background:#f1eff0;color:#6a6066;white-space:nowrap}
+@media(max-width:980px){.meeting-manager{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -197,12 +286,18 @@ textarea{width:100%;border:1px solid var(--line);border-radius:9px;min-height:56
       <button data-step="7"><span class="num">8</span>預覽 PRD</button>
       <button data-step="8"><span class="num">9</span>下載 PRD</button>
     </nav>
-    <div class="side-note">Prototype 模擬版：知識檢索、文件分析、競品發查、會議逐字稿、即時問題與流程圖皆使用固定情境假資料；不連接真實知識庫或後端。</div>
+    <div class="settings-entry">
+      <button id="openSettings">
+        <span><span class="gear">⚙</span> AI 與系統設定<small id="sideAiStatus">目前：Mock Mode</small></span>
+        <span>›</span>
+      </button>
+    </div>
+    <div class="side-note">Prototype 模擬版：知識檢索、文件分析、競品發查、多場會議逐字稿／日期分析、即時問題與流程圖皆使用固定情境假資料；不連接真實知識庫或後端。</div>
   </aside>
 
   <main class="main">
-    <div class="top"><h2>需求定版工作台</h2><span class="pill">Phase 1 · Baseline 前</span></div>
-    <section class="hero">
+    <div class="top"><h2 id="workspaceTitle">需求定版工作台</h2><span class="pill" id="runtimePill">Mock Mode · Phase 1</span></div>
+    <section class="hero" id="workflowHero">
       <div class="hero-main"><div class="kicker">REQUIREMENT INTELLIGENCE</div><h3>從文件、會議到可確認的 PRD，一條流程完成。</h3><p>先說明需求；彤靈會主動到行內知識庫找出可能有用的規範、歷史 PRD、系統規格與作業知識，再結合你補充的文件、競品與會議內容，整理成可確認、可追溯的 PRD。</p></div>
       <div class="hero-side"><b>AI 把資訊<span>攤開</span>，<br>人把需求<span>定下來</span>。</b><small>不以 AI 建議取代業務、SA、風控或法遵的最終責任。</small></div>
     </section>
@@ -221,7 +316,323 @@ textarea{width:100%;border:1px solid var(--line);border-radius:9px;min-height:56
       </div>
     </section>
 
-    <section class="shell">
+
+    <section class="settings-page" id="settingsPage">
+      <section class="settings-hero">
+        <div class="settings-hero-top">
+          <div>
+            <div class="kicker" style="font-size:9px;font-weight:900;letter-spacing:1.2px;color:var(--rose)">SYSTEM CONFIGURATION</div>
+            <h3>AI、知識檢索與資料治理設定</h3>
+            <p>設定彤靈使用哪個 AI、各任務如何路由、知識檢索策略、隱私邊界與 PRD 輸出。Prototype 僅模擬設定，不會真的連線或上傳 API Key。</p>
+          </div>
+          <button class="btn" id="closeSettings">← 回到需求工作台</button>
+        </div>
+        <div class="settings-runtime">
+          <div class="runtime-card"><small>主要 AI</small><b id="runtimeProvider">Mock Mode</b></div>
+          <div class="runtime-card"><small>主要模型</small><b id="runtimeModel">mock-requirement-model</b></div>
+          <div class="runtime-card"><small>Embedding</small><b id="runtimeEmbedding">Local Embedding</b></div>
+          <div class="runtime-card"><small>資料模式</small><b id="runtimePrivacy">Local-first</b></div>
+        </div>
+      </section>
+
+      <div class="settings-layout">
+        <aside class="settings-tabs" id="settingsTabs">
+          <button class="settings-tab active" data-setting-tab="model">AI 模型與連線</button>
+          <button class="settings-tab" data-setting-tab="routing">任務路由</button>
+          <button class="settings-tab" data-setting-tab="rag">知識檢索 / RAG</button>
+          <button class="settings-tab" data-setting-tab="privacy">安全與隱私</button>
+          <button class="settings-tab" data-setting-tab="meeting">會議助理</button>
+          <button class="settings-tab" data-setting-tab="output">PRD 與輸出</button>
+          <button class="settings-tab" data-setting-tab="advanced">進階設定</button>
+        </aside>
+
+        <div>
+          <!-- Model -->
+          <section class="settings-pane active" data-setting-pane="model">
+            <div class="settings-panel">
+              <h4>快速設定</h4>
+              <p>如果是零成本 POC，建議直接套用「Local-first」。正式串 API 時再切換到雲端提供商。</p>
+              <div class="preset-row">
+                <button class="preset local-first" data-preset="local">Local-first / 零 API 費用</button>
+                <button class="preset" data-preset="cloud">Cloud API / 快速驗證</button>
+                <button class="preset bank" data-preset="bank">Bank Guardrail / 嚴格來源模式</button>
+                <button class="preset" data-preset="mock">Demo Mock Mode</button>
+              </div>
+            </div>
+
+            <div class="settings-panel">
+              <h4>主要 AI 提供商</h4>
+              <p>模型名稱變動快，因此 Prototype 以「提供商＋可自填 Model ID」設計，不鎖死特定版本。</p>
+
+              <div class="provider-section-title"><b>Cloud API</b><span>需要 API Key 或企業端點</span></div>
+              <div class="provider-grid" id="providerGrid">
+                <label class="provider-card" data-provider="openai">
+                  <input type="radio" name="provider" value="openai">
+                  <div class="provider-name">OpenAI <span>API</span></div>
+                  <p>通用推理、文件理解、結構化輸出。</p>
+                  <div class="cost">依 API 使用量計費</div>
+                </label>
+                <label class="provider-card" data-provider="anthropic">
+                  <input type="radio" name="provider" value="anthropic">
+                  <div class="provider-name">Anthropic <span>API</span></div>
+                  <p>長文件、分析與文字生成。</p>
+                  <div class="cost">依 API 使用量計費</div>
+                </label>
+                <label class="provider-card" data-provider="gemini">
+                  <input type="radio" name="provider" value="gemini">
+                  <div class="provider-name">Google Gemini <span>API</span></div>
+                  <p>多模態、文件與一般生成任務。</p>
+                  <div class="cost">依 API / 專案方案</div>
+                </label>
+                <label class="provider-card gateway" data-provider="azure">
+                  <input type="radio" name="provider" value="azure">
+                  <div class="provider-name">Azure OpenAI <span>Enterprise</span></div>
+                  <p>企業 Azure 端點與 deployment 模式。</p>
+                  <div class="cost">企業雲端計費</div>
+                </label>
+                <label class="provider-card" data-provider="mistral">
+                  <input type="radio" name="provider" value="mistral">
+                  <div class="provider-name">Mistral AI <span>API</span></div>
+                  <p>通用 LLM 與企業 API 路徑。</p>
+                  <div class="cost">依 API 使用量計費</div>
+                </label>
+                <label class="provider-card" data-provider="cohere">
+                  <input type="radio" name="provider" value="cohere">
+                  <div class="provider-name">Cohere <span>API</span></div>
+                  <p>企業文本、Embedding / Rerank 情境。</p>
+                  <div class="cost">依 API 使用量計費</div>
+                </label>
+                <label class="provider-card gateway" data-provider="bedrock">
+                  <input type="radio" name="provider" value="bedrock">
+                  <div class="provider-name">AWS Bedrock <span>Gateway</span></div>
+                  <p>企業雲端統一模型存取與治理。</p>
+                  <div class="cost">依 AWS 使用量計費</div>
+                </label>
+                <label class="provider-card gateway" data-provider="openai_compatible">
+                  <input type="radio" name="provider" value="openai_compatible">
+                  <div class="provider-name">OpenAI-compatible API <span>Custom</span></div>
+                  <p>自訂相容端點、Proxy、企業 AI Gateway。</p>
+                  <div class="cost">依你的端點而定</div>
+                </label>
+              </div>
+
+              <div class="provider-section-title"><b>Local / Self-hosted</b><span>適合零成本 POC、敏感資料與離線環境</span></div>
+              <div class="provider-grid">
+                <label class="provider-card local" data-provider="ollama">
+                  <input type="radio" name="provider" value="ollama">
+                  <div class="provider-name">Ollama <span>Local</span></div>
+                  <p>本機模型管理與 OpenAI 類型整合常見選項。</p>
+                  <div class="cost">API 費用 NT$0</div>
+                </label>
+                <label class="provider-card local" data-provider="lmstudio">
+                  <input type="radio" name="provider" value="lmstudio">
+                  <div class="provider-name">LM Studio <span>Local</span></div>
+                  <p>本機 GUI 與 Local Server。</p>
+                  <div class="cost">API 費用 NT$0</div>
+                </label>
+                <label class="provider-card local" data-provider="vllm">
+                  <input type="radio" name="provider" value="vllm">
+                  <div class="provider-name">vLLM / Local Endpoint <span>Self-host</span></div>
+                  <p>自架 OpenAI-compatible 推論服務。</p>
+                  <div class="cost">自有硬體運算</div>
+                </label>
+                <label class="provider-card local" data-provider="llamacpp">
+                  <input type="radio" name="provider" value="llamacpp">
+                  <div class="provider-name">llama.cpp Server <span>Local</span></div>
+                  <p>量化模型、CPU / GPU 本機推論。</p>
+                  <div class="cost">API 費用 NT$0</div>
+                </label>
+                <label class="provider-card local selected" data-provider="mock">
+                  <input type="radio" name="provider" value="mock" checked>
+                  <div class="provider-name">Mock Mode <span>Demo</span></div>
+                  <p>固定假資料，不連任何模型；目前 Prototype 預設。</p>
+                  <div class="cost">NT$0</div>
+                </label>
+              </div>
+            </div>
+
+            <div class="settings-panel">
+              <h4>連線設定</h4>
+              <p id="providerHelp">Mock Mode 不需要 API Key。切換提供商後會顯示對應欄位。</p>
+              <div class="setting-grid2">
+                <div class="field">
+                  <label>Model ID</label>
+                  <input id="modelId" value="mock-requirement-model" placeholder="例如：你的模型識別字串">
+                  <small>不鎖定特定模型版本；正式系統由管理者維護可用清單。</small>
+                </div>
+                <div class="field">
+                  <label>Base URL / Endpoint</label>
+                  <input id="baseUrl" value="mock://local" placeholder="https://... 或 http://localhost:...">
+                  <small>Azure / 自架 / Local Server 可填自訂端點。</small>
+                </div>
+                <div class="field">
+                  <label>API Key / Token</label>
+                  <div class="input-with-button"><input id="apiKey" type="password" placeholder="Prototype 不會真的儲存或送出"><button class="btn" id="toggleApiKey">顯示</button></div>
+                  <small>正式產品應改由後端 Secret / Vault 管理，不應存瀏覽器 LocalStorage。</small>
+                </div>
+                <div class="field">
+                  <label>Timeout</label>
+                  <select id="timeoutSec"><option>30 秒</option><option selected>60 秒</option><option>120 秒</option><option>300 秒</option></select>
+                  <small>文件分析可使用較長 timeout。</small>
+                </div>
+              </div>
+              <div class="actions"><button class="btn aqua" id="testConnection">測試連線</button></div>
+              <div class="test-result" id="connectionResult"></div>
+            </div>
+          </section>
+
+          <!-- Routing -->
+          <section class="settings-pane" data-setting-pane="routing">
+            <div class="settings-panel">
+              <h4>任務模型路由</h4>
+              <p>POC 可以全部共用一個模型；正式版可依任務拆成快模型、強模型、Embedding 與 Reranker。</p>
+              <div class="tablewrap">
+                <table class="route-table">
+                  <thead><tr><th>任務</th><th>策略</th><th>Model / Service ID</th><th>備註</th></tr></thead>
+                  <tbody>
+                    <tr><td>需求抽取／Requirement Matrix</td><td><select data-route><option>主要模型</option><option>高品質模型</option><option>Local 模型</option></select></td><td><input value="inherit:primary"></td><td>核心決策支援</td></tr>
+                    <tr><td>衝突／變更辨識</td><td><select data-route><option>高品質模型</option><option selected>主要模型</option><option>Local 模型</option></select></td><td><input value="inherit:primary"></td><td>建議溫度較低</td></tr>
+                    <tr><td>知識檢索 Query 生成</td><td><select data-route><option selected>快速模型</option><option>主要模型</option><option>Local 模型</option></select></td><td><input value="inherit:fast"></td><td>低延遲即可</td></tr>
+                    <tr><td>會議即時問題</td><td><select data-route><option selected>快速模型</option><option>主要模型</option><option>Local 模型</option></select></td><td><input value="inherit:fast"></td><td>重視 latency</td></tr>
+                    <tr><td>PRD 生成</td><td><select data-route><option>快速模型</option><option selected>主要模型</option><option>高品質模型</option></select></td><td><input value="inherit:primary"></td><td>只用已確認 Requirement</td></tr>
+                    <tr><td>Mermaid / 架構圖</td><td><select data-route><option selected>主要模型</option><option>快速模型</option><option>Local 模型</option></select></td><td><input value="inherit:primary"></td><td>輸出結構化語法</td></tr>
+                    <tr><td>Embedding</td><td><select><option selected>Local Embedding</option><option>Provider Embedding API</option><option>Custom Service</option></select></td><td><input id="embeddingModel" value="multilingual-e5 / BGE 類模型"></td><td>POC 建議 local</td></tr>
+                    <tr><td>Reranker</td><td><select><option selected>不啟用</option><option>Local Reranker</option><option>Provider Rerank API</option></select></td><td><input value="none"></td><td>資料量變大再開</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="settings-panel">
+              <h4>Fallback / 容錯</h4>
+              <div class="setting-grid3">
+                <div class="field"><label>失敗重試</label><select id="retryCount"><option>0</option><option selected>1</option><option>2</option><option>3</option></select></div>
+                <div class="field"><label>Fallback Provider</label><select id="fallbackProvider"><option selected>不啟用</option><option>Ollama</option><option>OpenAI-compatible API</option><option>Mock Mode</option></select></div>
+                <div class="field"><label>Fallback 條件</label><select><option selected>連線失敗／Timeout</option><option>任何錯誤</option><option>低信心結果</option></select></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- RAG -->
+          <section class="settings-pane" data-setting-pane="rag">
+            <div class="settings-panel">
+              <h4>知識檢索策略</h4>
+              <p>控制「彤靈到底要找多少資料、怎麼排序，以及什麼樣的來源才有資格影響需求判斷」。</p>
+              <div class="setting-grid3">
+                <div class="field"><label>Top-K 候選</label><input id="ragTopK" type="number" value="8" min="1" max="50"><small>送入 rerank / 最終篩選前的候選數。</small></div>
+                <div class="field"><label>最終 Evidence 數</label><input id="ragEvidenceK" type="number" value="5" min="1" max="20"><small>真正帶入 Requirement 分析的證據數。</small></div>
+                <div class="field"><label>最低相關度</label><input id="ragMinScore" type="number" value="0.72" min="0" max="1" step="0.01"><small>低於門檻只顯示，不自動推薦。</small></div>
+                <div class="field"><label>Chunk Size</label><input id="chunkSize" type="number" value="800"><small>字元 / token 實作時擇一統一。</small></div>
+                <div class="field"><label>Chunk Overlap</label><input id="chunkOverlap" type="number" value="120"><small>避免條文跨 chunk 斷裂。</small></div>
+                <div class="field"><label>檢索模式</label><select id="retrievalMode"><option>Vector only</option><option selected>Hybrid（Vector + Keyword）</option><option>Keyword only</option></select></div>
+              </div>
+            </div>
+            <div class="settings-panel">
+              <h4>來源可信度與排序</h4>
+              <div class="switch-row"><div class="switch-copy"><b>版本新鮮度加權</b><span>同類文件衝突時，將較新的有效版本提高排序，但不自動取代人工判斷。</span></div><label class="toggle"><input id="recencyBoost" type="checkbox" checked><span class="slider"></span></label></div>
+              <div class="switch-row"><div class="switch-copy"><b>Owner / 權責加權</b><span>規範、風控、SA、業務等依文件 Owner 顯示權威脈絡。</span></div><label class="toggle"><input id="authorityBoost" type="checkbox" checked><span class="slider"></span></label></div>
+              <div class="switch-row"><div class="switch-copy"><b>嚴格 Evidence Mode</b><span>沒有來源支持的內容不得進入 Confirmed Requirement，只能標 Pending / Assumption。</span></div><label class="toggle"><input id="strictEvidence" type="checkbox" checked><span class="slider"></span></label></div>
+              <div class="switch-row"><div class="switch-copy"><b>歷史 PRD 降權</b><span>歷史專案可做參考，但不得凌駕現行規範與最新決議。</span></div><label class="toggle"><input id="historyPenalty" type="checkbox" checked><span class="slider"></span></label></div>
+            </div>
+          </section>
+
+          <!-- Privacy -->
+          <section class="settings-pane" data-setting-pane="privacy">
+            <div class="settings-panel">
+              <h4>安全與資料邊界</h4>
+              <div class="privacy-callout"><b>銀行 POC 建議：</b>預設 Local-first；如果使用外部 API，只送「必要片段」，不要把整份內規／SA 原文直接外送。</div>
+              <div class="switch-row"><div class="switch-copy"><b>Local-only Mode</b><span>只允許 local provider / local embedding；阻止外部 API。</span></div><label class="toggle"><input id="localOnly" type="checkbox"><span class="slider"></span></label></div>
+              <div class="switch-row"><div class="switch-copy"><b>只傳必要 Evidence Chunk</b><span>外部模型只取得已檢索的必要片段，不取得整份文件。</span></div><label class="toggle"><input id="chunkOnly" type="checkbox" checked><span class="slider"></span></label></div>
+              <div class="switch-row"><div class="switch-copy"><b>PII / 敏感欄位遮罩</b><span>送模型前先遮罩姓名、身分證、帳號等欄位。</span></div><label class="toggle"><input id="piiMask" type="checkbox" checked><span class="slider"></span></label></div>
+              <div class="switch-row"><div class="switch-copy"><b>保存 Prompt / Response Log</b><span>POC Debug 有用；正式環境需納入稽核與留存政策。</span></div><label class="toggle"><input id="saveAiLogs" type="checkbox"><span class="slider"></span></label></div>
+              <div class="setting-grid2" style="margin-top:10px">
+                <div class="field"><label>AI Log 留存</label><select id="logRetention"><option>不保存</option><option selected>7 天</option><option>30 天</option><option>90 天</option></select></div>
+                <div class="field"><label>檔案暫存</label><select id="fileRetention"><option>處理完成即刪除</option><option selected>Session 結束刪除</option><option>7 天</option></select></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Meeting -->
+          <section class="settings-pane" data-setting-pane="meeting">
+            <div class="settings-panel">
+              <h4>會議助理</h4>
+              <p>控制即時逐字稿、問題提醒與會後記錄的敏感度。POC 可以先用 VTT / TXT 模擬，不必接 Teams API。</p>
+              <div class="switch-row"><div class="switch-copy"><b>啟用即時問題生成</b><span>當 AI 發現 Scope、責任、限制或決策資訊不足時提出問題。</span></div><label class="toggle"><input id="meetingQuestions" type="checkbox" checked><span class="slider"></span></label></div>
+              <div class="switch-row"><div class="switch-copy"><b>即時 Decision / Change 偵測</b><span>標記「已決議、需求變更、待確認、Action Item」。</span></div><label class="toggle"><input id="meetingDecisionDetect" type="checkbox" checked><span class="slider"></span></label></div>
+              <div class="setting-grid3" style="margin-top:10px">
+                <div class="field"><label>問題敏感度</label><select id="questionSensitivity"><option>低</option><option selected>中</option><option>高</option></select><small>越高越容易打斷會議。</small></div>
+                <div class="field"><label>逐字稿批次</label><select><option>每 10 秒</option><option selected>每 30 秒</option><option>每 60 秒</option></select></div>
+                <div class="field"><label>會後摘要</label><select><option selected>Decision + Change + Open + Action</option><option>一般摘要</option><option>完整逐字稿＋摘要</option></select></div>
+              </div>
+              <div class="setting-grid3" style="margin-top:10px">
+                <div class="field"><label>會議日期</label><select id="meetingDatePolicy"><option selected>必填；缺日期不得確認</option><option>允許未知日期但標警示</option></select><small>使用實際討論日期，不使用上傳時間代替。</small></div>
+                <div class="field"><label>時區</label><select id="meetingTimezone"><option selected>Asia/Taipei (+08:00)</option><option>UTC</option><option>依專案設定</option></select></div>
+                <div class="field"><label>跨會議判讀</label><select id="meetingTemporalPolicy"><option selected>最新「已確認且明確」決議</option><option>只顯示時間軸，不自動建議 current</option></select><small>日期不是唯一權威排序依據。</small></div>
+              </div>
+              <div class="switch-row"><div class="switch-copy"><b>後續會議沉默不覆蓋前次決議</b><span>同議題若後續會議沒有明確 Decision / Change，保留上一個已確認狀態。</span></div><label class="toggle"><input id="meetingSilenceNoOverride" type="checkbox" checked><span class="slider"></span></label></div>
+
+            </div>
+          </section>
+
+          <!-- Output -->
+          <section class="settings-pane" data-setting-pane="output">
+            <div class="settings-panel">
+              <h4>PRD 與輸出</h4>
+              <div class="setting-grid3">
+                <div class="field"><label>預設語言</label><select id="outputLanguage"><option selected>繁體中文</option><option>English</option><option>雙語</option></select></div>
+                <div class="field"><label>PRD 模板</label><select id="prdTemplate"><option selected>金融需求標準版</option><option>精簡版</option><option>技術整合版</option><option>自訂模板</option></select></div>
+                <div class="field"><label>下載格式</label><select id="exportFormat"><option selected>DOCX / Word</option><option>PDF</option><option>Markdown</option><option>DOCX + Markdown</option></select></div>
+              </div>
+              <div class="switch-row"><div class="switch-copy"><b>包含 Traceability</b><span>每項需求保留來源與決策依據。</span></div><label class="toggle"><input id="includeTraceability" type="checkbox" checked><span class="slider"></span></label></div>
+              <div class="switch-row"><div class="switch-copy"><b>包含 Open Issues</b><span>未解事項不隱藏，明確放進 PRD。</span></div><label class="toggle"><input id="includeOpenIssues" type="checkbox" checked><span class="slider"></span></label></div>
+              <div class="switch-row"><div class="switch-copy"><b>包含流程／架構圖</b><span>Functional Flow、System Flow、System Architecture。</span></div><label class="toggle"><input id="includeDiagramsDefault" type="checkbox" checked><span class="slider"></span></label></div>
+              <div class="switch-row"><div class="switch-copy"><b>包含 Meeting Decision Summary</b><span>把會議決議、變更、Action Items 附在 PRD。</span></div><label class="toggle"><input id="includeMeetingSummary" type="checkbox" checked><span class="slider"></span></label></div>
+            </div>
+          </section>
+
+          <!-- Advanced -->
+          <section class="settings-pane" data-setting-pane="advanced">
+            <div class="settings-panel">
+              <h4>模型行為</h4>
+              <div class="setting-grid3">
+                <div class="field"><label>Temperature</label><input id="temperature" type="number" min="0" max="2" step="0.1" value="0.2"><small>需求分析建議偏低。</small></div>
+                <div class="field"><label>Max Output Tokens</label><input id="maxTokens" type="number" value="4096"><small>依模型與任務調整。</small></div>
+                <div class="field"><label>最低 AI Confidence</label><input id="confidenceThreshold" type="number" min="0" max="1" step="0.01" value="0.78"><small>低於門檻改標 Pending。</small></div>
+              </div>
+            </div>
+            <div class="settings-panel">
+              <h4>決策與 Guardrail</h4>
+              <div class="switch-row"><div class="switch-copy"><b>禁止 AI 自動核准需求</b><span>無論 Confidence 多高，正式 Baseline 必須有人確認。</span></div><label class="toggle"><input id="noAutoApprove" type="checkbox" checked disabled><span class="slider"></span></label></div>
+              <div class="switch-row"><div class="switch-copy"><b>法遵／風控議題強制 Escalate</b><span>偵測到法遵、風控、客權、金流高風險議題時不得自行定版。</span></div><label class="toggle"><input id="forceEscalation" type="checkbox" checked><span class="slider"></span></label></div>
+              <div class="switch-row"><div class="switch-copy"><b>來源衝突強制顯示原文</b><span>Human Review 前必須能看到至少兩個相衝突來源。</span></div><label class="toggle"><input id="forceConflictEvidence" type="checkbox" checked><span class="slider"></span></label></div>
+            </div>
+            <div class="settings-panel">
+              <h4>成本與使用限制</h4>
+              <div class="setting-grid3">
+                <div class="field"><label>單次任務成本上限</label><input id="costPerTask" value="NT$ 0（Prototype）"></div>
+                <div class="field"><label>每日成本上限</label><input id="dailyCostCap" value="NT$ 0（Prototype）"></div>
+                <div class="field"><label>超限策略</label><select id="overCostPolicy"><option selected>切換 Local / 停止呼叫</option><option>只提示</option><option>使用 Fallback Provider</option></select></div>
+              </div>
+              <div class="cost-bar"><span id="costBar"></span></div>
+              <div class="advanced-note" style="margin-top:9px">正式 API 成本應由後端 usage / token accounting 計算；此處只做產品介面與治理概念。</div>
+            </div>
+            <div class="settings-panel">
+              <h4>自訂 System Prompt（進階）</h4>
+              <div class="field"><textarea id="customSystemPrompt">你是金融需求整合 AI Copilot。必須區分「來源事實、AI 推論、未決事項」；不得自行核准需求，不得虛構缺少的證據；所有正式 Requirement 必須可追溯至來源或人工決策。</textarea><small>正式系統建議 Prompt 版控，不讓一般使用者直接覆寫核心安全規則。</small></div>
+            </div>
+          </section>
+
+          <div class="settings-footer">
+            <div class="save-status" id="settingsSaveStatus">尚未儲存本次設定</div>
+            <div class="actions" style="margin:0">
+              <button class="btn" id="resetSettings">還原 Prototype 預設</button>
+              <button class="btn primary" id="saveSettings">儲存設定</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="shell" id="workflowShell">
       <section class="panel">
 
         <!-- 1 Requirement Intake -->
@@ -514,42 +925,94 @@ textarea{width:100%;border:1px solid var(--line);border-radius:9px;min-height:56
           </div>
         </div>
 
-        <!-- 2 Meeting assistant -->
+        <!-- 4 Meeting assistant -->
         <div class="page" data-page="3">
-          <div class="head"><div><h3>4. 模擬會議助理</h3><p>模擬 Teams 需求會議：即時產生逐字稿、釐清問題，並在會後整理決議與待追蹤事項。</p></div><span class="badge bad-info">Meeting Copilot</span></div>
+          <div class="head">
+            <div>
+              <h3>4. 會議助理與會議時間軸</h3>
+              <p>同一個需求可能經過多場訪談、SA 檢視與定版會議。每一場會議都保留獨立分析結果與討論日期，AI 再依時間軸判讀需求如何演進。</p>
+            </div>
+            <span class="badge bad-info">Multi-Meeting Copilot</span>
+          </div>
+
+          <div class="step-callout">
+            <div class="ci">④</div>
+            <div>
+              <b>會議日期不是備註，而是 Requirement Evidence 的一部分</b>
+              <p>AI 會依「實際討論日期」排序同一議題的會議證據。較新的已確認明確決議可更新較早的會議立場；但不會因為日期較新就自動覆蓋正式規範，且後續會議沒有提到某議題時，不視為推翻前次決議。</p>
+            </div>
+          </div>
+
+          <div class="meeting-manager">
+            <div class="meeting-list-card">
+              <div class="meeting-list-head">
+                <div><h4>會議時間軸</h4><div class="small muted">依討論日期排序，可切換查看各場分析。</div></div>
+                <button class="btn aqua" id="toggleAddMeeting">＋ 新增</button>
+              </div>
+              <div id="meetingTimeline" class="meeting-timeline"></div>
+
+              <div id="addMeetingForm" class="meeting-add-form hidden">
+                <div class="setting-grid2">
+                  <div class="field"><label>討論日期 *</label><input type="date" id="newMeetingDate" value="2026-10-20"></div>
+                  <div class="field"><label>會議名稱 *</label><input id="newMeetingTitle" placeholder="例如：需求定版會議 #2"></div>
+                </div>
+                <div class="field" style="margin-top:7px"><label>與會角色</label><input id="newMeetingParticipants" value="PM、業務、SA"></div>
+                <div class="field" style="margin-top:7px"><label>逐字稿／會議筆記</label><textarea id="newMeetingTranscript" placeholder="Prototype 可直接貼入文字。正式 POC 也支援 VTT / TXT 上傳。"></textarea></div>
+                <div class="actions"><button class="btn primary" id="addMeeting">新增會議紀錄</button></div>
+              </div>
+            </div>
+
+            <div class="meeting-selected">
+              <div class="meeting-selected-head">
+                <div>
+                  <h4 id="selectedMeetingTitle">信用卡 APP 預借現金｜需求確認會議</h4>
+                  <div id="selectedMeetingMeta" class="meeting-selected-meta">2026/10/15 · PM、信用卡業務、SA、風控、法遵</div>
+                </div>
+                <span id="selectedMeetingStatus" class="badge bad-warn">待分析</span>
+              </div>
+              <div class="temporal-rule">
+                <b>日期判讀規則：</b>以討論日期而不是上傳日期排序；只把「已確認且明確的 Decision / Change」視為新的 meeting-level position。較晚的沉默不覆蓋較早決議；Open Issue 可重新打開既有事項；正式規範與權責來源仍需另外比較。
+              </div>
+            </div>
+          </div>
+
           <div class="meeting-grid">
             <div class="meeting-screen">
               <div class="meeting-top">
-                <div><b style="font-size:11px">信用卡 APP 預借現金｜需求確認會議</b><div class="small muted">PM、信用卡業務、SA、風控、法遵</div></div>
+                <div><b style="font-size:11px" id="liveMeetingTitle">信用卡 APP 預借現金｜需求確認會議</b><div class="small muted" id="liveMeetingDate">討論日期：2026/10/15</div></div>
                 <span id="liveState" class="badge bad-gray">尚未開始</span>
               </div>
-              <div id="transcript" class="transcript"><div class="item">點擊「開始模擬會議」後，逐字稿會依序產生。</div></div>
+              <div id="transcript" class="transcript"><div class="item">選擇一場待分析會議後，可播放／模擬逐字稿分析；已確認會議可直接查看下方分析結果。</div></div>
               <div class="actions">
-                <button class="btn primary" id="startMeeting">開始模擬會議</button>
-                <button class="btn dark" id="finishMeeting" disabled>結束會議並產生紀錄</button>
+                <button class="btn primary" id="startMeeting">開始分析此會議</button>
+                <button class="btn dark" id="finishMeeting" disabled>確認分析並建立會議紀錄</button>
               </div>
             </div>
             <div>
               <div class="card">
                 <h4>AI 即時問題</h4>
-                <div id="questionList" class="question-list"><div class="small muted">會議進行時，AI 會依逐字稿產生需要確認的問題。</div></div>
+                <div id="questionList" class="question-list"><div class="small muted">分析逐字稿時，AI 會依當場內容產生需要釐清的問題。</div></div>
               </div>
               <div class="card">
                 <h4>即時捕捉</h4>
                 <div id="meetingSignals">
-                  <div class="item"><span class="badge bad-gray">等待</span> 決議／需求變更／待確認</div>
+                  <div class="item"><span class="badge bad-gray">等待</span> Decision／Change／Open Issue／Action Item</div>
                 </div>
               </div>
             </div>
           </div>
+
           <div id="meetingRecord" class="hidden">
             <div class="card">
-              <div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><div><h4 style="margin-bottom:3px">會議助理最終紀錄</h4><div class="small muted">將作為下一步 AI 分析的結構化來源。</div></div><span class="badge bad-ok">已完成</span></div>
+              <div style="display:flex;justify-content:space-between;gap:10px;align-items:center">
+                <div><h4 style="margin-bottom:3px" id="meetingRecordTitle">會議分析結果</h4><div class="small muted" id="meetingRecordMeta">各場會議分析結果分開保存，並帶入討論日期。</div></div>
+                <span class="badge bad-ok">已確認</span>
+              </div>
               <div class="record-grid" style="margin-top:10px">
-                <div class="record-box"><h5>已確認決議</h5><ul><li>Phase 1 僅正卡持卡人。</li><li>入帳僅限本人本行活存帳戶。</li><li>交易送出前再次 OTP。</li><li>確認頁先揭露手續費與必要成本。</li><li>成功／失敗皆發送 Push。</li><li>提供最近 90 天交易紀錄。</li></ul></div>
-                <div class="record-box"><h5>需求變更</h5><ul><li>附卡：Phase 1 → Phase 2。</li><li>本人指定帳戶 → 本人本行活存帳戶。</li><li>沿用 APP 登入 → 交易層 OTP。</li></ul></div>
-                <div class="record-box"><h5>待確認</h5><ul><li>APP 每日交易限額。</li><li>風控拒絕原因對客顯示方式。</li></ul></div>
-                <div class="record-box"><h5>Action Items</h5><ul><li>風控：確認 APP 每日限額。</li><li>風控／法遵：確認拒絕原因顯示原則。</li></ul></div>
+                <div class="record-box"><h5>已確認決議</h5><ul id="recordDecisions"></ul></div>
+                <div class="record-box"><h5>需求變更</h5><ul id="recordChanges"></ul></div>
+                <div class="record-box"><h5>待確認</h5><ul id="recordOpen"></ul></div>
+                <div class="record-box"><h5>Action Items</h5><ul id="recordActions"></ul></div>
               </div>
             </div>
           </div>
@@ -557,9 +1020,9 @@ textarea{width:100%;border:1px solid var(--line);border-radius:9px;min-height:56
 
         <!-- 3 AI Analysis -->
         <div class="page" data-page="4">
-          <div class="head"><div><h3>5. AI 分析</h3><p>將需求說明、已選知識庫來源、補充文件、會議助理最終紀錄與競品參考建立 Requirement Matrix，並同步整理資訊面影響。</p></div><span class="badge bad-gray">Mock Analysis</span></div>
+          <div class="head"><div><h3>5. AI 分析</h3><p>將需求說明、已選知識庫來源、補充文件、所有已確認會議紀錄與競品參考建立 Requirement Matrix；會議 Evidence 會依實際討論日期形成時間軸，再同步整理資訊面影響。</p></div><span class="badge bad-gray">Mock Analysis</span></div>
           <div class="card">
-            <div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><div><h4 style="margin-bottom:3px">跨來源分析</h4><div class="small muted">辨識需求狀態，並將 SA／會議內容轉成可供 PM 與資訊單位確認的系統、電文、資料庫影響清單。</div></div><button class="btn primary" id="runAnalysis">開始分析</button></div>
+            <div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><div><h4 style="margin-bottom:3px">跨來源分析</h4><div class="small muted">辨識需求狀態、同議題跨會議變化，並將 SA／會議內容轉成可供 PM 與資訊單位確認的系統、電文、資料庫影響清單。</div></div><button class="btn primary" id="runAnalysis">開始分析</button></div>
             <div class="progress"><div id="progressBar"></div></div>
             <div class="log" id="analysisLog"><div class="log-line"><span class="dot"></span><span>等待開始分析</span></div></div>
           </div>
@@ -578,12 +1041,32 @@ textarea{width:100%;border:1px solid var(--line);border-radius:9px;min-height:56
               <div class="item"><span class="badge bad-ok">已確認</span> Phase 1 僅正卡；附卡改列 Phase 2。</div>
             </div>
             <div class="card">
+              <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+                <div>
+                  <h4 style="margin-bottom:3px">跨會議時間軸分析</h4>
+                  <div class="small muted">AI 先依 discussion date 排序，再判斷同一 Topic 的 Decision / Change / Open Issue 演進；日期較新不等於權限較高。</div>
+                </div>
+                <span class="badge bad-info">Date-aware</span>
+              </div>
+              <div class="tablewrap" style="margin-top:9px"><table class="temporal-table">
+                <thead><tr><th>議題</th><th>2026/10/01 需求初談</th><th>2026/10/08 SA／風控檢視</th><th>2026/10/15 需求確認</th><th>AI 目前判讀</th></tr></thead>
+                <tbody>
+                  <tr><td><b>卡別範圍</b></td><td>正卡＋附卡皆納入初步構想</td><td>附卡資格需業務／風控確認</td><td>明確決議：Phase 1 僅正卡，附卡 Phase 2</td><td class="temporal-current"><span class="badge bad-ok">Current</span> 採 10/15 的已確認明確變更；保留 10/01 為歷史脈絡。</td></tr>
+                  <tr><td><b>入帳帳戶</b></td><td>希望本人指定帳戶</td><td>SA 指出現行僅支援本人本行活存</td><td>明確決議：Phase 1 本人本行活存</td><td class="temporal-current"><span class="badge bad-ok">Current</span> 10/15 為 meeting-level current position；仍需與正式規範比對。</td></tr>
+                  <tr><td><b>交易驗證</b></td><td>沿用登入／方式未定</td><td>SA：既有 OTP 可沿用；風控要求再次驗證</td><td>明確決議：交易送出前 OTP</td><td class="temporal-current"><span class="badge bad-ok">Current</span> 10/15 明確定版。</td></tr>
+                  <tr><td><b>APP 每日限額</b></td><td>暫定不另設</td><td>沒有現成 APP 專屬參數</td><td>仍待風控確認</td><td class="temporal-current"><span class="badge bad-warn">Open</span> 後續會議未形成明確決議，因此不能用「較新日期」硬判定。</td></tr>
+                </tbody>
+              </table></div>
+              <div class="temporal-rule"><b>Temporal Guardrail：</b>「最新」只在同一 Topic 的 meeting evidence 內協助判讀狀態；正式規範、法遵、風控或 SA 的權威性仍獨立比較。後續會議未提及某議題，不代表自動撤銷前次決議。</div>
+            </div>
+
+            <div class="card">
               <h4>Requirement Matrix</h4>
-              <div class="tablewrap"><table><thead><tr><th>議題</th><th>需求起點</th><th>知識庫</th><th>SA／補充資料</th><th>會議助理紀錄</th><th>狀態</th></tr></thead><tbody>
-                <tr><td><b>入帳帳戶</b></td><td>本人指定帳戶</td><td>KB-RULE-001：須本人；跨行另評估</td><td>SA：本人本行活存</td><td>Phase 1 本人本行活存</td><td><span class="badge bad-risk">需人工確認</span></td></tr>
-                <tr><td><b>OTP</b></td><td>原則沿用登入</td><td>KB-RULE-001／KB-RISK-014：交易層再次驗證</td><td>KB-SYS-021／SA：可沿用 OTP</td><td>Phase 1 必做 OTP</td><td><span class="badge bad-risk">需人工確認</span></td></tr>
-                <tr><td><b>附卡</b></td><td>包含</td><td>KB-RULE-001：數位通路另行核准</td><td>SA：需業務確認</td><td>Phase 2 再評估</td><td><span class="badge bad-ok">Phase 1 排除</span></td></tr>
-                <tr><td><b>每日限額</b></td><td>暫定不另設</td><td>KB-RULE-001：通路可另設；KB-BIZ-047 不定義通路限額</td><td>SA：無專屬參數</td><td>待風控確認</td><td><span class="badge bad-warn">Open</span></td></tr>
+              <div class="tablewrap"><table><thead><tr><th>議題</th><th>需求起點</th><th>知識庫</th><th>SA／補充資料</th><th>會議時間軸</th><th>狀態</th></tr></thead><tbody>
+                <tr><td><b>入帳帳戶</b></td><td>本人指定帳戶</td><td>KB-RULE-001：須本人；跨行另評估</td><td>SA：本人本行活存</td><td>10/01 指定帳戶 → 10/08 SA 限制 → <b>10/15 本人本行活存</b></td><td><span class="badge bad-risk">需人工確認</span></td></tr>
+                <tr><td><b>OTP</b></td><td>原則沿用登入</td><td>KB-RULE-001／KB-RISK-014：交易層再次驗證</td><td>KB-SYS-021／SA：可沿用 OTP</td><td>10/01 未定 → 10/08 建議／風控要求 → <b>10/15 必做 OTP</b></td><td><span class="badge bad-risk">需人工確認</span></td></tr>
+                <tr><td><b>附卡</b></td><td>包含</td><td>KB-RULE-001：數位通路另行核准</td><td>SA：需業務確認</td><td>10/01 正附卡 → 10/08 待確認 → <b>10/15 附卡 Phase 2</b></td><td><span class="badge bad-ok">Phase 1 排除</span></td></tr>
+                <tr><td><b>每日限額</b></td><td>暫定不另設</td><td>KB-RULE-001：通路可另設；KB-BIZ-047 不定義通路限額</td><td>SA：無專屬參數</td><td>10/01 暫不另設 → 10/08 技術未支援 → <b>10/15 仍待風控確認</b></td><td><span class="badge bad-warn">Open</span></td></tr>
               </tbody></table></div>
             </div>
             <div class="card" id="knowledgeAnalysisCard">
@@ -699,14 +1182,14 @@ textarea{width:100%;border:1px solid var(--line);border-radius:9px;min-height:56
           <div class="decision" data-key="account">
             <div class="decision-top"><h4>R01｜Phase 1 入帳帳戶</h4><span class="badge bad-risk">來源不一致</span></div>
             <p>AI 建議：Phase 1 僅允許正卡持卡人將預借款項撥入本人本行活存帳戶。</p>
-            <div class="source">依據：SA v0.3、會議助理最終紀錄；與原需求「本人指定帳戶」不同。</div>
+            <div class="source">依據：SA v0.3、2026/10/08 SA／風控檢視、2026/10/15 需求確認會議；與 2026/10/01 初談及原需求「本人指定帳戶」不同。</div>
             <div class="choices"><button class="btn choice" data-value="accept">接受</button><button class="btn choice" data-value="modify">修改</button><button class="btn choice" data-value="reject">拒絕</button></div>
             <textarea class="edit hidden" placeholder="請輸入修改後的需求內容或拒絕理由。"></textarea>
           </div>
           <div class="decision" data-key="otp">
             <div class="decision-top"><h4>R02｜交易層再次驗證</h4><span class="badge bad-risk">來源不一致</span></div>
             <p>AI 建議：使用者送出預借現金交易前，須完成 OTP 驗證。</p>
-            <div class="source">依據：作業規範、SA、會議助理最終紀錄；與原需求「沿用 APP 登入」不同。</div>
+            <div class="source">依據：作業規範、2026/10/08 SA／風控檢視、2026/10/15 需求確認會議；與早期「沿用 APP 登入／方式未定」不同。</div>
             <div class="choices"><button class="btn choice" data-value="accept">接受</button><button class="btn choice" data-value="modify">修改</button><button class="btn choice" data-value="reject">拒絕</button></div>
             <textarea class="edit hidden" placeholder="請輸入修改後的需求內容或拒絕理由。"></textarea>
           </div>
@@ -824,7 +1307,7 @@ const guideData=[
   ['✍','先告訴我你想做什麼','直接輸入需求說明，或上傳需求說明文件；不用先整理成正式格式。','需求文字或需求文件至少一項'],
   ['🔎','先找出公司裡已經知道的事','彤靈會依需求到行內知識庫搜尋規範、歷史 PRD、作業規則與系統規格；你決定哪些資料要加入本案。','完成檢索，並加入至少 1 份相關知識'],
   ['📚','再補上手邊資料與外部參考','上傳 SA、技術資料或其他文件；競品發查為選用，只作 Benchmark。','可直接繼續；補充資料為選用'],
-  ['🎙','讓會議助理幫你抓決議','啟動模擬會議，觀察逐字稿、即時釐清問題，最後確認會議紀錄。','完成並確認一份會議紀錄'],
+  ['🎙','把多場會議串成需求時間軸','新增／切換不同會議；每場保留獨立分析結果與討論日期，再讓 AI 判讀同議題如何演進。','完成必要的最新會議分析；歷史會議持續保留'],
   ['✨','讓 AI 把所有來源攤開','整合需求、知識庫、補充文件、會議與競品資料，找出衝突、缺漏、Open Issues 與 IT Impact。','AI 分析完成'],
   ['✅','現在輪到人做判斷','對關鍵需求接受、修改或拒絕；AI 不會替你定版。','3 個關鍵項目都已處置'],
   ['🧭','把需求轉成流程與架構','產生功能流程、系統流程與系統架構圖，再決定哪些要放進 PRD。','至少選擇並確認一種圖'],
@@ -1130,8 +1613,8 @@ document.querySelectorAll('.info-tab').forEach(btn=>btn.onclick=()=>{
   document.getElementById('infoDatabase').classList.toggle('hidden',key!=='database');
 });
 
-// Meeting assistant
-const transcriptData=[
+// Meeting assistant — v12 multi-meeting + date aware
+const seededMeetingTranscript=[
   ['00:00','PM','今天主要確認 APP 預借現金 Phase 1 範圍，上次簡報有寫正附卡跟本人指定帳戶。'],
   ['00:24','信用卡業務','附卡先不要，資格比較複雜；第一階段先正卡。'],
   ['00:48','SA','帳戶部分，目前核心只支援本人本行活存帳戶；跨行要新增驗證與轉帳流程。'],
@@ -1157,7 +1640,113 @@ const signalMap={
   6:['新增需求','成功／失敗 Push＋90 天紀錄'],
   7:['待確認','風控拒絕原因顯示方式']
 };
+
+let meetingRecords=[
+  {
+    id:'m-20261001',date:'2026-10-01',title:'需求初談',participants:'PM、信用卡業務',
+    status:'CONFIRMED',
+    transcript:[
+      ['00:00','PM','初步希望 APP 預借現金正卡與附卡都能使用。'],
+      ['00:35','信用卡業務','入帳先以本人指定帳戶為構想，驗證方式請資訊再評估。']
+    ],
+    decisions:['初步範圍納入正卡與附卡。','入帳方向暫以「本人指定帳戶」作為需求構想。'],
+    changes:[],
+    open:['交易層驗證方式尚未確認。','數位通路是否需要額外限額尚未確認。'],
+    actions:['資訊／風控：確認高風險交易驗證方式。']
+  },
+  {
+    id:'m-20261008',date:'2026-10-08',title:'SA／風控檢視',participants:'PM、SA、風控',
+    status:'CONFIRMED',
+    transcript:[
+      ['00:00','SA','現行核心介面只支援本人本行活存，跨行需要額外流程。'],
+      ['00:40','SA','既有 OTP 服務可沿用。'],
+      ['01:10','風控','預借現金屬高風險交易，不能只靠登入；每日限額仍需確認。']
+    ],
+    decisions:['確認現行核心介面僅支援本人本行活存帳戶。'],
+    changes:['「本人指定帳戶」出現系統能力限制，需帶回需求會議定版。'],
+    open:['附卡 Phase 1 資格仍待確認。','APP 每日交易限額待風控確認。'],
+    actions:['PM：於下次需求確認會議定版帳戶範圍與附卡。','風控：確認 APP 每日限額。']
+  },
+  {
+    id:'m-20261015',date:'2026-10-15',title:'需求確認會議',participants:'PM、信用卡業務、SA、風控、法遵',
+    status:'DRAFT',
+    transcript:seededMeetingTranscript,
+    decisions:[],changes:[],open:[],actions:[]
+  }
+];
+let selectedMeetingId='m-20261015';
 let meetingIndex=0,meetingTimer=null;
+
+function meetingById(id){return meetingRecords.find(m=>m.id===id)}
+function confirmedMeetings(){return meetingRecords.filter(m=>m.status==='CONFIRMED').sort((a,b)=>a.date.localeCompare(b.date))}
+function formatMeetingDate(d){return (d||'').replaceAll('-','/')}
+function meetingTraceabilityText(){
+  const rows=confirmedMeetings();
+  return rows.length?rows.map(m=>`${formatMeetingDate(m.date)} ${m.title}`).join('、'):'尚無已確認會議紀錄';
+}
+function updateMeetingStatus(){
+  const confirmed=confirmedMeetings().length;
+  const draft=meetingRecords.filter(m=>m.status!=='CONFIRMED').length;
+  const el=document.getElementById('stMeeting');
+  el.textContent=draft?`${confirmed} 已確認 / ${draft} 待分析`:`${confirmed} 場已確認`;
+  el.className=confirmed?'right-ok':'right-warn';
+}
+function renderMeetingTimeline(){
+  const wrap=document.getElementById('meetingTimeline');
+  const sorted=[...meetingRecords].sort((a,b)=>a.date.localeCompare(b.date));
+  wrap.innerHTML=sorted.map(m=>{
+    const active=m.id===selectedMeetingId?' active':'';
+    const badge=m.status==='CONFIRMED'
+      ?'<span class="badge bad-ok">已確認</span>'
+      :'<span class="badge bad-warn">待分析</span>';
+    return `<div class="meeting-row${active}" data-meeting-id="${m.id}">
+      <div class="meeting-row-top"><div><time>${formatMeetingDate(m.date)}</time><b>${m.title}</b></div>${badge}</div>
+      <div class="meeting-meta">${m.participants||'與會角色未填'} · ${m.status==='CONFIRMED'?'已有獨立分析結果':'尚未形成 Meeting Record'}</div>
+    </div>`;
+  }).join('');
+  wrap.querySelectorAll('[data-meeting-id]').forEach(row=>row.onclick=()=>selectMeeting(row.dataset.meetingId));
+  updateMeetingStatus();
+}
+function renderMeetingRecord(m){
+  const box=document.getElementById('meetingRecord');
+  if(!m || m.status!=='CONFIRMED'){box.classList.add('hidden');return}
+  box.classList.remove('hidden');
+  document.getElementById('meetingRecordTitle').textContent=`${formatMeetingDate(m.date)}｜${m.title}｜會議分析結果`;
+  document.getElementById('meetingRecordMeta').textContent=`討論日期：${formatMeetingDate(m.date)} · 各場會議結果獨立保存，跨會議整合在下一步由 AI 依日期處理。`;
+  const fill=(id,arr)=>document.getElementById(id).innerHTML=(arr&&arr.length)?arr.map(x=>`<li>${x}</li>`).join(''):'<li class="muted">無</li>';
+  fill('recordDecisions',m.decisions);fill('recordChanges',m.changes);fill('recordOpen',m.open);fill('recordActions',m.actions);
+}
+function resetLiveArea(m){
+  clearInterval(meetingTimer);meetingTimer=null;meetingIndex=0;meetingStarted=false;meetingTranscriptDone=false;
+  document.getElementById('questionList').innerHTML='<div class="small muted">分析逐字稿時，AI 會依當場內容產生需要釐清的問題。</div>';
+  document.getElementById('meetingSignals').innerHTML='<div class="item"><span class="badge bad-gray">等待</span> Decision／Change／Open Issue／Action Item</div>';
+  document.getElementById('liveMeetingTitle').textContent=m.title;
+  document.getElementById('liveMeetingDate').textContent=`討論日期：${formatMeetingDate(m.date)}`;
+  const tr=document.getElementById('transcript');
+  if(m.status==='CONFIRMED'){
+    tr.innerHTML=(m.transcript||[]).map(([tm,who,text])=>`<div class="utter"><time>${tm}</time><b>${who}</b><span>${text}</span></div>`).join('');
+    document.getElementById('startMeeting').disabled=true;
+    document.getElementById('finishMeeting').disabled=true;
+    document.getElementById('liveState').textContent='已確認';
+    document.getElementById('liveState').className='badge bad-ok';
+  }else{
+    tr.innerHTML='<div class="item">此場會議尚未分析。點擊「開始分析此會議」播放／模擬逐字稿分析。</div>';
+    document.getElementById('startMeeting').disabled=false;
+    document.getElementById('finishMeeting').disabled=true;
+    document.getElementById('liveState').textContent='待分析';
+    document.getElementById('liveState').className='badge bad-warn';
+  }
+}
+function selectMeeting(id){
+  selectedMeetingId=id;
+  const m=meetingById(id);if(!m)return;
+  document.getElementById('selectedMeetingTitle').textContent=m.title;
+  document.getElementById('selectedMeetingMeta').textContent=`${formatMeetingDate(m.date)} · ${m.participants||'與會角色未填'}`;
+  const st=document.getElementById('selectedMeetingStatus');
+  st.textContent=m.status==='CONFIRMED'?'已確認':'待分析';
+  st.className=`badge ${m.status==='CONFIRMED'?'bad-ok':'bad-warn'}`;
+  renderMeetingTimeline();resetLiveArea(m);renderMeetingRecord(m);
+}
 function appendQuestion(text){
   const q=document.getElementById('questionList');
   if(q.querySelector('.muted'))q.innerHTML='';
@@ -1169,43 +1758,103 @@ function appendSignal(type,text){
   const cls=type==='待確認'?'bad-warn':type==='需求變更'?'bad-risk':'bad-info';
   const d=document.createElement('div');d.className='item';d.innerHTML=`<span class="badge ${cls}">${type}</span> ${text}`;s.appendChild(d);
 }
+function transcriptForMeeting(m){
+  return (m.transcript&&m.transcript.length)?m.transcript:[['00:00','PM','此場會議未提供逐字稿內容。']];
+}
 function meetingTick(){
-  if(meetingIndex>=transcriptData.length){
+  const m=meetingById(selectedMeetingId), data=transcriptForMeeting(m);
+  if(meetingIndex>=data.length){
     clearInterval(meetingTimer);meetingTranscriptDone=true;
     document.getElementById('finishMeeting').disabled=false;
-    document.getElementById('liveState').textContent='逐字稿完成';
-    document.getElementById('liveState').className='badge bad-ok';
-    toast('逐字稿完成，可產生最終會議紀錄');return;
+    document.getElementById('liveState').textContent='逐字稿分析完成';
+    document.getElementById('liveState').className='badge bad-info';
+    toast('此場會議分析完成，可確認並建立 Meeting Record');return;
   }
-  const [tm,who,text]=transcriptData[meetingIndex];
+  const [tm,who,text]=data[meetingIndex];
   const tr=document.getElementById('transcript');
   if(meetingIndex===0)tr.innerHTML='';
   const d=document.createElement('div');d.className='utter';d.innerHTML=`<time>${tm}</time><b>${who}</b><span>${text}</span>`;tr.appendChild(d);tr.scrollTop=tr.scrollHeight;
-  if(questionMap[meetingIndex])appendQuestion(questionMap[meetingIndex]);
-  if(signalMap[meetingIndex])appendSignal(signalMap[meetingIndex][0],signalMap[meetingIndex][1]);
+
+  if(m.id==='m-20261015'){
+    if(questionMap[meetingIndex])appendQuestion(questionMap[meetingIndex]);
+    if(signalMap[meetingIndex])appendSignal(signalMap[meetingIndex][0],signalMap[meetingIndex][1]);
+  }else{
+    const low=text.toLowerCase();
+    if(text.includes('待確認')||text.includes('還要')||text.includes('未定'))appendSignal('待確認',text);
+    else if(text.includes('改')||text.includes('phase 2')||text.includes('Phase 2'))appendSignal('需求變更',text);
+    else appendSignal('決議',text);
+    if(text.includes('風控')||text.includes('法遵')||text.includes('確認'))appendQuestion('這句話是正式決議、建議，還是仍需權責人確認？');
+  }
   meetingIndex++;
 }
+function analyzeGenericMeeting(m){
+  const text=(m.transcript||[]).map(x=>x[2]).join(' ');
+  const decisions=[],changes=[],open=[],actions=[];
+  if(/OTP/i.test(text))decisions.push('會議提及 OTP／再次驗證；請於人工確認時判定是否為正式決議。');
+  if(/正卡/.test(text))decisions.push('會議提及正卡範圍。');
+  if(/附卡/.test(text)&&/(Phase 2|第二階段|先不要)/i.test(text))changes.push('附卡範圍出現調整訊號。');
+  if(/本人本行|本行活存/.test(text))decisions.push('會議提及本人本行活存帳戶。');
+  if(/每日.*限額|日限額/.test(text))open.push('APP 每日限額仍需確認。');
+  if(/待確認|未定|還要確認/.test(text))open.push('逐字稿含未決語句，需人工檢視原文。');
+  if(!decisions.length&&!changes.length&&!open.length)open.push('Mock AI 未辨識到可直接定版的明確 Decision；請人工閱讀此場逐字稿。');
+  actions.push('PM：確認本場 AI 分析結果與原文是否一致。');
+  return {decisions,changes,open:[...new Set(open)],actions};
+}
 document.getElementById('startMeeting').onclick=()=>{
-  if(meetingStarted)return toast('模擬會議已開始');
+  const m=meetingById(selectedMeetingId);if(!m)return;
+  if(m.status==='CONFIRMED')return toast('此場會議已確認');
+  if(meetingStarted)return toast('此場會議分析已開始');
   meetingStarted=true;meetingIndex=0;
   document.getElementById('startMeeting').disabled=true;
-  document.getElementById('liveState').textContent='LIVE';
+  document.getElementById('liveState').textContent='ANALYZING';
   document.getElementById('liveState').className='badge bad-risk';
   meetingTick();meetingTimer=setInterval(meetingTick,560);
 };
 document.getElementById('finishMeeting').onclick=()=>{
   if(!meetingTranscriptDone)return;
-  meetingDone=true;
-  document.getElementById('meetingRecord').classList.remove('hidden');
+  const m=meetingById(selectedMeetingId);if(!m)return;
+  if(m.id==='m-20261015'){
+    m.decisions=['Phase 1 僅正卡持卡人。','入帳僅限本人本行活存帳戶。','交易送出前再次 OTP。','確認頁先揭露手續費與必要成本。','成功／失敗皆發送 Push。','提供最近 90 天交易紀錄。'];
+    m.changes=['附卡：Phase 1 → Phase 2。','本人指定帳戶 → 本人本行活存帳戶。','沿用 APP 登入 → 交易層 OTP。'];
+    m.open=['APP 每日交易限額。','風控拒絕原因對客顯示方式。'];
+    m.actions=['風控：確認 APP 每日限額。','風控／法遵：確認拒絕原因顯示原則。'];
+  }else{
+    Object.assign(m,analyzeGenericMeeting(m));
+  }
+  m.status='CONFIRMED';
   document.getElementById('finishMeeting').disabled=true;
-  document.getElementById('stMeeting').textContent='已完成';
-  document.getElementById('stMeeting').className='right-ok';
-  addFiles([{name:'04_會議助理_最終紀錄.txt',size:'2.6 KB'}]);
-  renderFooter();toast('最終會議紀錄已加入案件資料');
+  addFiles([{name:`MEETING_${m.date}_${m.title}_分析紀錄.txt`,size:'Meeting Record'}]);
+  if(m.id==='m-20261015')meetingDone=true;
+  renderMeetingTimeline();selectMeeting(m.id);renderFooter();
+  toast(`已保存 ${formatMeetingDate(m.date)} 的獨立會議分析結果`);
 };
+document.getElementById('toggleAddMeeting').onclick=()=>{
+  document.getElementById('addMeetingForm').classList.toggle('hidden');
+};
+document.getElementById('addMeeting').onclick=()=>{
+  const date=document.getElementById('newMeetingDate').value;
+  const title=document.getElementById('newMeetingTitle').value.trim();
+  const participants=document.getElementById('newMeetingParticipants').value.trim();
+  const text=document.getElementById('newMeetingTranscript').value.trim();
+  if(!date||!title)return toast('討論日期與會議名稱為必填');
+  const lines=(text||'本場會議尚未提供完整逐字稿，請後續補充。').split(/\n+/).filter(Boolean);
+  const transcript=lines.map((line,i)=>{
+    const sec=i*25, mm=String(Math.floor(sec/60)).padStart(2,'0'), ss=String(sec%60).padStart(2,'0');
+    return [`${mm}:${ss}`,'PM',line];
+  });
+  const m={id:'m-'+Date.now(),date,title,participants,status:'DRAFT',transcript,decisions:[],changes:[],open:[],actions:[]};
+  meetingRecords.push(m);selectedMeetingId=m.id;
+  document.getElementById('addMeetingForm').classList.add('hidden');
+  document.getElementById('newMeetingTitle').value='';
+  document.getElementById('newMeetingTranscript').value='';
+  renderMeetingTimeline();selectMeeting(m.id);
+  toast('已新增會議，可獨立分析並保存結果');
+};
+renderMeetingTimeline();
+selectMeeting(selectedMeetingId);
 
 // Analysis
-const logs=['辨識需求起點、知識庫、補充文件、會議與競品來源','抽取需求、限制、決議與 Action Items','比對版本差異與語意衝突','建立 Requirement Matrix','整理競品 Benchmark（如有載入）','整理涉及系統、電文／API 與資料庫影響','標記已確認／衝突／待確認／排除'];
+const logs=['辨識需求起點、知識庫、補充文件、會議與競品來源','依討論日期排序所有已確認會議','抽取每場 Decision / Change / Open Issue / Action Item','建立同議題跨會議時間軸，辨識被更新／重新打開的事項','比對版本差異與語意衝突','建立 Requirement Matrix','整理競品 Benchmark（如有載入）','整理涉及系統、電文／API 與資料庫影響','標記已確認／衝突／待確認／排除'];
 document.getElementById('runAnalysis').onclick=()=>{
   if(!knowledgeSearchDone||knowledgeSelectedCount()===0)return toast('請先完成知識檢索並加入至少 1 份知識來源');
   if(!meetingDone)return toast('請先完成會議助理');
@@ -1481,9 +2130,16 @@ function otpText(){if(state.otp==='accept')return '使用者送出預借現金�
 function limitOpen(){return state.limit==='accept'}
 function limitText(){if(state.limit==='accept')return 'APP 每日交易限額：待風控／業務確認。';if(state.limit==='modify')return state.edits.limit;return ''}
 function meetingSummaryHtml(){
-  return `<div class="prd-section"><h4>4. Meeting Decision Summary</h4>
-  <ul><li>Phase 1 僅正卡持卡人。</li><li>入帳僅限本人本行活存帳戶。</li><li>交易送出前再次 OTP。</li><li>確認頁先揭露手續費及必要成本。</li><li>成功／失敗皆 Push；提供最近 90 天交易紀錄。</li></ul>
-  <p><b>待確認：</b>APP 每日限額、風控拒絕原因顯示方式。</p></div>`;
+  const meetings=confirmedMeetings();
+  const history=meetings.map(m=>{
+    const ds=(m.decisions||[]).slice(0,3).map(x=>`<li>${x}</li>`).join('');
+    const os=(m.open||[]).slice(0,2).join('、');
+    return `<div class="prd-req"><b>${formatMeetingDate(m.date)}｜${m.title}</b><br><ul>${ds||'<li>無已確認決議</li>'}</ul>${os?`<span><b>待確認：</b>${os}</span>`:''}</div>`;
+  }).join('');
+  return `<div class="prd-section"><h4>4. Meeting Decision Timeline</h4>
+  <p>以下依「實際討論日期」排序。較新的已確認明確決議可更新較早 meeting-level position；後續會議沉默不視為覆蓋，正式規範仍需獨立比較。</p>
+  ${history}
+  <p><b>目前會議層級判讀：</b>Phase 1 僅正卡；入帳本人本行活存；交易送出前 OTP；費用確認前揭露；成功／失敗 Push；90 天紀錄。APP 每日限額與風控拒絕原因仍為 Open。</p></div>`;
 }
 function prdInner(){
   const open=limitOpen()?`<div class="prd-req open"><b>O-01｜APP 每日交易限額</b><br>${limitText()}</div>`:'';
@@ -1506,14 +2162,14 @@ function prdInner(){
   ${itImpactHtml()}
   ${flow1}${flow2}${arch}
   <div class="prd-section"><h4>9. Open Issues</h4>${open||'<p>目前無由本次人工確認保留之 O-01。</p>'}<div class="prd-req open"><b>O-02｜風控拒絕原因</b><br>對客顯示方式待風控／法遵確認。</div><div class="prd-req open"><b>O-03｜APP 每日限額之資訊實作</b><br>若每日限額正式成立，才確認是否新增 APP_CA_DAILY_COUNTER 或採既有風控／核心參數完成。</div></div>
-  <div class="prd-section"><h4>10. Traceability</h4><p>需求起點：${requirementSourceLabel()}。</p><p><b>知識庫來源：</b>${knowledgeTraceabilityText()}。</p><p><b>其他來源：</b>SA／補充資料、會議助理最終紀錄；如有載入競品資料，僅作 Benchmark。功能流程、系統流程與系統架構圖由可版本化定義產生；PRD 顯示渲染後圖像。資訊面清單為 Prototype 模擬分析結果，正式規格仍需 SA／資訊單位確認。</p></div>
+  <div class="prd-section"><h4>10. Traceability</h4><p>需求起點：${requirementSourceLabel()}。</p><p><b>知識庫來源：</b>${knowledgeTraceabilityText()}。</p><p><b>會議來源：</b>${meetingTraceabilityText()}。</p><p><b>其他來源：</b>SA／補充資料；如有載入競品資料，僅作 Benchmark。功能流程、系統流程與系統架構圖由可版本化定義產生；PRD 顯示渲染後圖像。資訊面清單為 Prototype 模擬分析結果，正式規格仍需 SA／資訊單位確認。</p></div>
   </div>`;
 }
 function buildPrd(){document.getElementById('prdPreview').innerHTML=prdInner()}
 document.getElementById('backToFlow').onclick=()=>go(6);
 document.getElementById('approvePrd').onclick=()=>{
   prdApproved=true;renderFooter();
-  document.getElementById('finalStatus').innerHTML=`<div class="item"><span class="badge bad-ok">已完成</span> 知識庫檢索與來源選取</div><div class="item"><span class="badge bad-ok">已完成</span> 會議助理紀錄</div><div class="item"><span class="badge bad-ok">已完成</span> 入帳帳戶人工確認</div><div class="item"><span class="badge bad-ok">已完成</span> OTP 人工確認</div><div class="item"><span class="badge ${limitOpen()?'bad-warn':'bad-ok'}">${limitOpen()?'Open Issue':'已處置'}</span> APP 每日交易限額</div><div class="item"><span class="badge bad-ok">已完成</span> 資訊面影響整理</div><div class="item"><span class="badge bad-ok">已完成</span> 流程／架構圖圖像納入 PRD</div>`;
+  document.getElementById('finalStatus').innerHTML=`<div class="item"><span class="badge bad-ok">已完成</span> 知識庫檢索與來源選取</div><div class="item"><span class="badge bad-ok">已完成</span> 多場會議時間軸與分析紀錄</div><div class="item"><span class="badge bad-ok">已完成</span> 入帳帳戶人工確認</div><div class="item"><span class="badge bad-ok">已完成</span> OTP 人工確認</div><div class="item"><span class="badge ${limitOpen()?'bad-warn':'bad-ok'}">${limitOpen()?'Open Issue':'已處置'}</span> APP 每日交易限額</div><div class="item"><span class="badge bad-ok">已完成</span> 資訊面影響整理</div><div class="item"><span class="badge bad-ok">已完成</span> 流程／架構圖圖像納入 PRD</div>`;
   go(8);toast('PRD 已確認，可下載');
 };
 document.getElementById('previewAgain').onclick=()=>go(7);
@@ -1610,8 +2266,211 @@ document.getElementById('downloadPrd').onclick=()=>{
 
 renderFiles();renderFooter();
 
+
+// Settings
+let settingsOpen=false;
+const providerDefaults={
+  mock:{name:'Mock Mode',model:'mock-requirement-model',url:'mock://local',help:'Mock Mode 不需要 API Key；所有分析維持固定情境假資料。',privacy:'Local-first'},
+  ollama:{name:'Ollama',model:'請輸入本機模型名稱',url:'http://localhost:11434',help:'Local 模式。正式 POC 可由後端呼叫 Ollama；瀏覽器 Prototype 不會直接連。',privacy:'Local-only'},
+  lmstudio:{name:'LM Studio',model:'請輸入本機模型名稱',url:'http://localhost:1234/v1',help:'可透過 Local Server 提供相容端點；正式版建議由後端統一代理。',privacy:'Local-only'},
+  vllm:{name:'vLLM / Local Endpoint',model:'your-local-model',url:'http://localhost:8000/v1',help:'Self-hosted OpenAI-compatible endpoint。',privacy:'Local-only'},
+  llamacpp:{name:'llama.cpp Server',model:'your-gguf-model',url:'http://localhost:8080/v1',help:'本機量化模型推論；POC 適合離線測試。',privacy:'Local-only'},
+  openai:{name:'OpenAI',model:'請輸入 OpenAI Model ID',url:'https://api.openai.com/v1',help:'Cloud API。正式系統 API Key 必須放後端 Secret / Vault。',privacy:'Cloud API'},
+  anthropic:{name:'Anthropic',model:'請輸入 Anthropic Model ID',url:'https://api.anthropic.com',help:'Cloud API。正式系統應由後端連線並控管資料外送。',privacy:'Cloud API'},
+  gemini:{name:'Google Gemini',model:'請輸入 Gemini Model ID',url:'https://generativelanguage.googleapis.com',help:'Cloud API。請依企業資料治理政策決定可送資料範圍。',privacy:'Cloud API'},
+  azure:{name:'Azure OpenAI',model:'deployment-name',url:'https://{resource}.openai.azure.com',help:'企業 Azure deployment 模式，可填 resource endpoint 與 deployment。',privacy:'Enterprise Cloud'},
+  mistral:{name:'Mistral AI',model:'請輸入 Mistral Model ID',url:'https://api.mistral.ai/v1',help:'Cloud API。正式版由後端管理金鑰與稽核。',privacy:'Cloud API'},
+  cohere:{name:'Cohere',model:'請輸入 Cohere Model ID',url:'https://api.cohere.com',help:'可搭配企業文本、Embedding / Rerank。',privacy:'Cloud API'},
+  bedrock:{name:'AWS Bedrock',model:'model-id / inference-profile',url:'aws://bedrock',help:'企業雲端模型 Gateway；正式連線需 AWS 認證與區域設定。',privacy:'Enterprise Cloud'},
+  openai_compatible:{name:'OpenAI-compatible API',model:'custom-model-id',url:'https://your-ai-gateway/v1',help:'適用企業 AI Gateway、Proxy 或其他 OpenAI-compatible 端點。',privacy:'Custom Endpoint'}
+};
+const settingsFields=[
+  'modelId','baseUrl','timeoutSec','retryCount','fallbackProvider','embeddingModel','ragTopK','ragEvidenceK','ragMinScore','chunkSize','chunkOverlap','retrievalMode',
+  'recencyBoost','authorityBoost','strictEvidence','historyPenalty','localOnly','chunkOnly','piiMask','saveAiLogs','logRetention','fileRetention',
+  'meetingQuestions','meetingDecisionDetect','questionSensitivity','meetingDatePolicy','meetingTimezone','meetingTemporalPolicy','meetingSilenceNoOverride','outputLanguage','prdTemplate','exportFormat','includeTraceability','includeOpenIssues','includeDiagramsDefault',
+  'includeMeetingSummary','temperature','maxTokens','confidenceThreshold','forceEscalation','forceConflictEvidence','costPerTask','dailyCostCap','overCostPolicy','customSystemPrompt'
+];
+
+function selectedProvider(){
+  const el=document.querySelector('input[name="provider"]:checked');
+  return el?el.value:'mock';
+}
+function updateProviderCards(){
+  document.querySelectorAll('.provider-card').forEach(card=>{
+    const radio=card.querySelector('input[name="provider"]');
+    card.classList.toggle('selected',!!radio&&radio.checked);
+  });
+}
+function applyProvider(provider,overwrite=true){
+  const d=providerDefaults[provider]||providerDefaults.mock;
+  if(overwrite){
+    document.getElementById('modelId').value=d.model;
+    document.getElementById('baseUrl').value=d.url;
+  }
+  document.getElementById('providerHelp').textContent=d.help;
+  updateProviderCards();
+  updateRuntimeSummary();
+}
+document.querySelectorAll('input[name="provider"]').forEach(r=>r.onchange=()=>applyProvider(r.value,true));
+
+document.getElementById('toggleApiKey').onclick=()=>{
+  const i=document.getElementById('apiKey');
+  i.type=i.type==='password'?'text':'password';
+  document.getElementById('toggleApiKey').textContent=i.type==='password'?'顯示':'隱藏';
+};
+
+document.querySelectorAll('.settings-tab').forEach(btn=>btn.onclick=()=>{
+  document.querySelectorAll('.settings-tab').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.settings-pane').forEach(x=>x.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelector(`[data-setting-pane="${btn.dataset.settingTab}"]`).classList.add('active');
+});
+
+function openSettings(){
+  settingsOpen=true;
+  document.getElementById('workflowHero').classList.add('hidden');
+  document.getElementById('guideCard').classList.add('hidden');
+  document.getElementById('workflowShell').classList.add('hidden');
+  document.getElementById('settingsPage').classList.add('active');
+  document.getElementById('workspaceTitle').textContent='AI 與系統設定';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function closeSettings(){
+  settingsOpen=false;
+  document.getElementById('workflowHero').classList.remove('hidden');
+  document.getElementById('guideCard').classList.remove('hidden');
+  document.getElementById('workflowShell').classList.remove('hidden');
+  document.getElementById('settingsPage').classList.remove('active');
+  document.getElementById('workspaceTitle').textContent='需求定版工作台';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.getElementById('openSettings').onclick=openSettings;
+document.getElementById('closeSettings').onclick=closeSettings;
+
+function setValue(id,value){
+  const el=document.getElementById(id);
+  if(!el)return;
+  if(el.type==='checkbox')el.checked=!!value;
+  else el.value=value;
+}
+function getValue(id){
+  const el=document.getElementById(id);
+  if(!el)return null;
+  return el.type==='checkbox'?el.checked:el.value;
+}
+function collectSettings(){
+  const data={provider:selectedProvider()};
+  settingsFields.forEach(id=>data[id]=getValue(id));
+  return data;
+}
+function restoreSettings(data){
+  if(!data)return;
+  const radio=document.querySelector(`input[name="provider"][value="${data.provider||'mock'}"]`);
+  if(radio)radio.checked=true;
+  settingsFields.forEach(id=>{if(Object.prototype.hasOwnProperty.call(data,id))setValue(id,data[id])});
+  applyProvider(data.provider||'mock',false);
+  updateKnowledgeSettingsStatus();
+}
+function updateRuntimeSummary(){
+  const p=selectedProvider(), d=providerDefaults[p]||providerDefaults.mock;
+  const model=document.getElementById('modelId').value||d.model;
+  const embedding=document.getElementById('embeddingModel').value||'Local Embedding';
+  const privacy=document.getElementById('localOnly').checked?'Local-only':d.privacy;
+  document.getElementById('runtimeProvider').textContent=d.name;
+  document.getElementById('runtimeModel').textContent=model;
+  document.getElementById('runtimeEmbedding').textContent=embedding;
+  document.getElementById('runtimePrivacy').textContent=privacy;
+  document.getElementById('sideAiStatus').textContent=`目前：${d.name}`;
+  document.getElementById('runtimePill').textContent=`${d.name} · Phase 1`;
+}
+document.getElementById('modelId').addEventListener('input',updateRuntimeSummary);
+document.getElementById('embeddingModel').addEventListener('input',updateRuntimeSummary);
+document.getElementById('localOnly').addEventListener('change',updateRuntimeSummary);
+
+function updateKnowledgeSettingsStatus(){
+  // visual-only hook reserved for future linkage to the RAG screen
+}
+document.getElementById('saveSettings').onclick=()=>{
+  const data=collectSettings();
+  try{
+    localStorage.setItem('tongling_settings_v11',JSON.stringify(data));
+    document.getElementById('settingsSaveStatus').textContent='已儲存至此瀏覽器 Prototype（不含 API Key）';
+  }catch(e){
+    document.getElementById('settingsSaveStatus').textContent='瀏覽器禁止 LocalStorage，本次設定只保留在頁面中';
+  }
+  updateRuntimeSummary();
+  toast('設定已儲存');
+};
+document.getElementById('resetSettings').onclick=()=>{
+  try{localStorage.removeItem('tongling_settings_v11')}catch(e){}
+  document.querySelector('input[name="provider"][value="mock"]').checked=true;
+  applyProvider('mock',true);
+  setValue('ragTopK','8');setValue('ragEvidenceK','5');setValue('ragMinScore','0.72');
+  setValue('chunkSize','800');setValue('chunkOverlap','120');setValue('retrievalMode','Hybrid（Vector + Keyword）');
+  ['recencyBoost','authorityBoost','strictEvidence','historyPenalty','chunkOnly','piiMask','meetingQuestions','meetingDecisionDetect','meetingSilenceNoOverride','includeTraceability','includeOpenIssues','includeDiagramsDefault','includeMeetingSummary','forceEscalation','forceConflictEvidence'].forEach(id=>setValue(id,true));
+  setValue('localOnly',false);setValue('saveAiLogs',false);
+  setValue('temperature','0.2');setValue('maxTokens','4096');setValue('confidenceThreshold','0.78');
+  document.getElementById('settingsSaveStatus').textContent='已還原 Prototype 預設';
+  updateRuntimeSummary();
+  toast('已還原設定');
+};
+
+document.querySelectorAll('[data-preset]').forEach(btn=>btn.onclick=()=>{
+  const preset=btn.dataset.preset;
+  if(preset==='local'){
+    document.querySelector('input[name="provider"][value="ollama"]').checked=true;
+    applyProvider('ollama',true);
+    setValue('localOnly',true);setValue('chunkOnly',true);setValue('piiMask',true);setValue('saveAiLogs',false);
+    setValue('fallbackProvider','Mock Mode');
+    document.getElementById('settingsSaveStatus').textContent='已套用 Local-first 預設，尚未儲存';
+  }else if(preset==='cloud'){
+    document.querySelector('input[name="provider"][value="openai"]').checked=true;
+    applyProvider('openai',true);
+    setValue('localOnly',false);setValue('chunkOnly',true);setValue('piiMask',true);
+    document.getElementById('settingsSaveStatus').textContent='已套用 Cloud API 預設，尚未儲存';
+  }else if(preset==='bank'){
+    document.querySelector('input[name="provider"][value="ollama"]').checked=true;
+    applyProvider('ollama',true);
+    setValue('localOnly',true);setValue('chunkOnly',true);setValue('piiMask',true);setValue('strictEvidence',true);setValue('saveAiLogs',false);setValue('forceEscalation',true);setValue('forceConflictEvidence',true);
+    setValue('confidenceThreshold','0.85');
+    document.getElementById('settingsSaveStatus').textContent='已套用 Bank Guardrail 預設，尚未儲存';
+  }else{
+    document.querySelector('input[name="provider"][value="mock"]').checked=true;
+    applyProvider('mock',true);
+    setValue('localOnly',false);setValue('costPerTask','NT$ 0（Prototype）');setValue('dailyCostCap','NT$ 0（Prototype）');
+    document.getElementById('settingsSaveStatus').textContent='已套用 Demo Mock Mode，尚未儲存';
+  }
+  updateRuntimeSummary();
+  toast('已套用快速設定');
+});
+
+document.getElementById('testConnection').onclick=()=>{
+  const p=selectedProvider(), result=document.getElementById('connectionResult'), key=document.getElementById('apiKey').value.trim();
+  const local=['mock','ollama','lmstudio','vllm','llamacpp'].includes(p);
+  result.className='test-result show';
+  if(local){
+    result.classList.add('ok');
+    result.textContent='Prototype 模擬：連線檢查成功。正式版會由後端檢查 endpoint / model health。';
+  }else if(!key){
+    result.classList.add('warn');
+    result.textContent='尚未輸入 API Key。Prototype 不會真的呼叫外部服務；正式版請將金鑰放在後端 Secret / Vault。';
+  }else{
+    result.classList.add('ok');
+    result.textContent='Prototype 模擬：設定格式看起來完整。為安全起見，本頁不會真的把 API Key 送到任何提供商。';
+  }
+};
+
+const originalNavClick=[...document.querySelectorAll('#nav button')];
+originalNavClick.forEach(btn=>btn.addEventListener('click',()=>{if(settingsOpen)closeSettings()}));
+
+try{
+  const saved=JSON.parse(localStorage.getItem('tongling_settings_v11')||'null');
+  if(saved)restoreSettings(saved);
+}catch(e){}
+updateProviderCards();
+updateRuntimeSummary();
+
 renderGuide();updateRequirementReady();
 </script>
 </body>
 </html>
-

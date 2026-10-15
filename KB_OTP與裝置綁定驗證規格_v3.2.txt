@@ -1,0 +1,12 @@
+【Mock Internal Knowledge Base】
+KB-SYS-021｜OTP／裝置綁定驗證規格
+版本：v3.2
+Owner：數位金融／資訊
+更新日期：2026/07/18
+
+命中內容：
+- 既有交易驗證 API 可支援 OTP challenge。
+- 回傳 OTP 驗證結果與 Audit ID。
+- 是否套用於特定交易，仍由需求與風控規則決定。
+
+本檔為 Prototype 假資料。
