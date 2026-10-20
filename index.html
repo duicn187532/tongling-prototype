@@ -268,6 +268,20 @@ textarea{width:100%;border:1px solid var(--line);border-radius:9px;min-height:56
 .meeting-source-badge{font-size:8px;border-radius:999px;padding:3px 6px;background:#f1eff0;color:#6a6066;white-space:nowrap}
 @media(max-width:980px){.meeting-manager{grid-template-columns:1fr}}
 
+
+/* Post-class toolkit link; independent of Prototype navigation */
+.learn-more-link{display:block;color:#fff;text-decoration:none;margin:13px 0 12px;padding:13px;border-radius:13px;border:1px solid rgba(255,255,255,.20);background:linear-gradient(135deg,rgba(99,207,198,.24),rgba(201,79,103,.18))}
+.learn-more-link span{display:block;font-size:12px;font-weight:800}
+.learn-more-link span b{font-size:9px;background:#f3cf89;color:#302d30;border-radius:5px;padding:3px 5px;margin-left:3px}
+.learn-more-link small{display:block;color:#d9e7e5;font-size:10px;line-height:1.5;margin:8px 0}
+.learn-more-link strong{display:inline-block;font-size:11px;color:#f4d5db}
+.learn-more-link:hover{background:rgba(99,207,198,.34)}
+.share-toolkit-banner{display:flex;align-items:center;justify-content:space-between;gap:15px;border-radius:13px;border:1px solid #baded7;background:linear-gradient(100deg,#e4f5f1,#fff6f0);padding:13px 17px;margin-bottom:16px;text-decoration:none;color:#25494b}
+.share-toolkit-banner strong{font-size:13px}
+.share-toolkit-banner small{display:block;font-size:11px;margin-top:5px;color:#64787a}
+.share-toolkit-banner b{font-size:11px;white-space:nowrap;color:#176b66}
+.share-toolkit-banner:hover{border-color:#89c5bc;background:#e2f7f0}
+@media(max-width:780px){.learn-more-link{margin:8px 0}.share-toolkit-banner{padding:12px;gap:8px}.share-toolkit-banner strong{font-size:12px}.share-toolkit-banner small{font-size:10px}.share-toolkit-banner b{font-size:10px}}
 </style>
 </head>
 <body>
@@ -292,11 +306,13 @@ textarea{width:100%;border:1px solid var(--line);border-radius:9px;min-height:56
         <span>›</span>
       </button>
     </div>
+    <a class="learn-more-link" href="./skills-v2/" target="_blank" rel="noopener noreferrer"><span>📚 AI 軟體服務技能書 <b>NEW</b></span><small>48 張白話教學卡 · Claude Code Skills · 金融 PM</small><strong>開啟技能書 ↗</strong></a>
     <div class="side-note">Prototype 模擬版：知識檢索、文件分析、競品發查、多場會議逐字稿／日期分析、即時問題與流程圖皆使用固定情境假資料；不連接真實知識庫或後端。</div>
   </aside>
 
   <main class="main">
     <div class="top"><h2 id="workspaceTitle">需求定版工作台</h2><span class="pill" id="runtimePill">Mock Mode · Phase 1</span></div>
+    <a class="share-toolkit-banner" href="./skills-v2/" target="_blank" rel="noopener noreferrer"><span>📚 <strong>課後分享｜AI 軟體服務技能書 V2</strong><small>48 項工具、演算法與 Skills 的金融 PM 白話解說</small></span><b>閱讀技能書 ↗</b></a>
     <section class="hero" id="workflowHero">
       <div class="hero-main"><div class="kicker">REQUIREMENT INTELLIGENCE</div><h3>從文件、會議到可確認的 PRD，一條流程完成。</h3><p>先說明需求；彤靈會主動到行內知識庫找出可能有用的規範、歷史 PRD、系統規格與作業知識，再結合你補充的文件、競品與會議內容，整理成可確認、可追溯的 PRD。</p></div>
       <div class="hero-side"><b>AI 把資訊<span>攤開</span>，<br>人把需求<span>定下來</span>。</b><small>不以 AI 建議取代業務、SA、風控或法遵的最終責任。</small></div>
