@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="theme-color" content="#152d3b" />
+<meta name="description" content="從想法到軟體服務：AI 工具、網站技術、檢索演算法與部署方法的課後分享清單。" />
+<title>從想法到軟體服務｜AI 工具與技術技能清單</title>
+<style>
+:root{--bg:#f6f8f8;--ink:#1a303b;--muted:#647982;--line:#e2e8e9;--card:#fff;--teal:#167c76;--orange:#ffbf72;--shadow:0 14px 32px rgba(18,45,56,.035)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Noto Sans TC","Microsoft JhengHei",sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}button,input{font:inherit}button{cursor:pointer}a{color:inherit}a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #ffc46f;outline-offset:3px}a:not(.brand-link):hover{text-decoration:none}
+.page{max-width:1240px;margin:auto;padding:0 34px}.hero{background:#152d3b;position:relative;overflow:hidden;color:white}.hero:before,.hero:after{content:"";position:absolute;pointer-events:none;border-radius:50%;border:1px solid rgba(255,255,255,.12)}.hero:before{width:620px;height:620px;right:-170px;top:-330px}.hero:after{width:410px;height:410px;right:-45px;top:-225px;background:radial-gradient(circle,rgba(44,176,165,.13),transparent 65%)}.hero-inner{position:relative;z-index:1;padding-top:36px;padding-bottom:64px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:20px}.brand{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:750;letter-spacing:.055em}.brand-icon{display:grid;place-items:center;color:#102a38;width:31px;height:31px;border-radius:10px;background:var(--orange);font-size:20px}.brand-sub{font-weight:500;color:#a7c0c8}.top-link{text-decoration:none;font-size:12px;font-weight:650;border:1px solid rgba(255,255,255,.25);padding:10px 15px;border-radius:100px;color:#d9eceb;transition:.18s}.top-link:hover{background:rgba(255,255,255,.12)}.hero-content{padding-top:75px;max-width:820px}.eyebrow{display:inline-block;border:1px solid rgba(255,255,255,.22);border-radius:24px;padding:7px 13px;color:#bce6dd;font-size:12px;font-weight:650;letter-spacing:.08em;background:rgba(255,255,255,.04)}h1{font-weight:820;letter-spacing:-.05em;font-size:clamp(34px,5.2vw,64px);line-height:1.18;margin:22px 0}.accent{color:var(--orange)}.hero-desc{color:#bed0d5;font-size:16px;line-height:1.85;max-width:710px;margin:0}.hero-bottom{display:flex;align-items:end;justify-content:space-between;gap:26px;margin-top:54px;flex-wrap:wrap}.hero-stats{display:flex;gap:36px;flex-wrap:wrap}.hero-stat{display:flex;flex-direction:column;gap:4px}.hero-stat strong{font-size:25px;font-weight:800;letter-spacing:-.035em}.hero-stat span{color:#a8c1c6;font-size:12px}.hero-note{color:#a7c0c8;font-size:12px}.star{color:var(--orange);font-size:17px;margin-right:5px}
+main{padding-bottom:80px}.intro{padding-top:34px}.intro-box{background:#fff;border:1px solid var(--line);box-shadow:var(--shadow);border-radius:18px;padding:26px 30px;display:flex;align-items:center;justify-content:space-between;gap:24px}.intro-text{display:flex;gap:16px;align-items:start}.intro-mark{width:41px;height:41px;border-radius:13px;background:#e7f5f0;color:#157f70;display:grid;place-items:center;flex:none;font-size:22px}.intro h2{margin:0 0 6px;font-size:18px;letter-spacing:-.02em}.intro p{margin:0;color:var(--muted);font-size:13px;line-height:1.8}.intro-badge{flex:none;border-radius:50px;color:#2c7d73;background:#edf7f3;padding:9px 14px;font-size:12px;font-weight:700}
+.section-head{margin-top:68px;display:flex;justify-content:space-between;gap:15px;align-items:end}.section-kicker{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:800;color:#258179;margin:0 0 10px}.section-head h2{margin:0;font-size:clamp(24px,3vw,32px);font-weight:790;letter-spacing:-.04em}.section-desc{font-size:13px;color:var(--muted);line-height:1.7;margin-top:10px}.section-mini{font-size:12px;color:var(--muted);white-space:nowrap}
+.flow-card{border:1px solid var(--line);background:#fff;border-radius:18px;margin-top:23px;padding:28px 30px;box-shadow:var(--shadow)}.flow{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;align-items:stretch}.flow-step{background:#f5f8f8;border:1px solid #e4ebeb;border-radius:12px;padding:15px 8px;min-height:102px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:7px}.flow-step b{font-size:13px}.flow-step span{font-size:11px;color:#6e858d;line-height:1.5}.flow-step .flow-emoji{font-size:21px}.flow-step:last-child{background:#e7f5f0;border-color:#bfdfd7}.flow-arrow{display:none}.flow-note{margin:17px 0 0;text-align:center;font-size:12px;color:var(--muted)}
+.controls{margin-top:38px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.tabs{display:flex;gap:6px;flex-wrap:wrap}.tab{border:1px solid var(--line);background:#fff;color:#546c76;border-radius:100px;padding:11px 19px;font-size:13px;font-weight:700;transition:.18s}.tab:hover{border-color:#91bdb8}.tab[aria-pressed="true"]{color:#fff;background:#176f6a;border-color:#176f6a}.search-wrap{position:relative;flex:0 1 320px;min-width:220px}.search-wrap svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#81959c}.search{width:100%;padding:11px 14px 11px 42px;border:1px solid var(--line);border-radius:100px;outline:none;background:#fff;color:var(--ink);font-size:13px}.search:focus{border-color:#228d82;box-shadow:0 0 0 3px #d5f2ec}.search::placeholder{color:#8ca0a6}.result-status{font-size:12px;color:#788d94;margin:14px 0 18px}.skills-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.skill-card{min-width:0;background:var(--card);border:1px solid #e1e8e9;border-radius:16px;padding:22px;display:flex;flex-direction:column;box-shadow:var(--shadow);transition:transform .18s,border-color .18s,box-shadow .18s}.skill-card:hover{transform:translateY(-3px);border-color:#bdd9d5;box-shadow:0 15px 32px rgba(16,48,56,.075)}.skill-card[hidden]{display:none}.card-top{display:flex;justify-content:space-between;align-items:center;gap:10px}.category-tag{font-size:11px;font-weight:700;letter-spacing:.05em;border-radius:7px;padding:5px 9px}.tag-tool{background:#eaf5ed;color:#23745b}.tag-tech{background:#e8f2fc;color:#336eb1}.tag-method{background:#fff1e3;color:#a45e1b}.card-number{font-size:11px;color:#a8b9bc;font-weight:650;font-variant-numeric:tabular-nums}.skill-card h3{font-size:18px;line-height:1.44;letter-spacing:-.02em;margin:18px 0 18px;overflow-wrap:anywhere}.card-copy p,.card-usage p{margin:5px 0 0;font-size:13px;line-height:1.76}.card-label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#98a9ae;font-weight:750}.card-copy{margin-bottom:17px}.card-usage{margin-top:auto;padding-top:15px;border-top:1px solid #eef2f1}.card-usage p{color:#617780}.empty{display:none;text-align:center;border:1px dashed #cbdcdb;background:#fff;border-radius:16px;padding:42px 20px;color:#6b858d}.empty[aria-hidden="false"]{display:block}.empty strong{display:block;margin-bottom:8px;color:var(--ink)}
+.recipe-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:24px}.recipe{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px;box-shadow:var(--shadow)}.recipe-icon{font-size:24px}.recipe h3{font-size:16px;margin:14px 0 9px;letter-spacing:-.02em}.recipe .tagline{font-size:12px;color:var(--muted);line-height:1.7;margin:0 0 20px}.recipe .stack{font-size:12px;line-height:1.95;color:#25454e;font-weight:650}.recipe .stack span{display:inline-block;background:#f2f7f6;border-radius:6px;padding:2px 7px;margin:3px 3px 0 0}.principle{background:#e8f2f0;border:1px solid #cde0db;border-radius:17px;padding:24px 30px;margin-top:28px}.principle h3{margin:0 0 7px;font-size:15px}.principle p{font-size:13px;line-height:1.8;color:#496a6b;margin:0}.footer{border-top:1px solid #dfe8e8;margin-top:70px;padding-top:27px;display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between;font-size:12px;color:#819197}.footer a{color:#247d76;font-weight:700;text-decoration:none}.footer a:hover{text-decoration:underline}.small-foot{font-size:12px;line-height:1.7;margin-top:14px;color:#71858b}
+@media(max-width:960px){.skills-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.flow{grid-template-columns:repeat(4,minmax(0,1fr))}.flow-step:last-child{grid-column:span 2}.recipe-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.recipe:last-child{grid-column:span 2}}
+@media(max-width:600px){.page{padding-left:18px;padding-right:18px}.hero-inner{padding-top:20px;padding-bottom:42px}.hero-content{padding-top:44px}h1{font-size:35px;letter-spacing:-.045em}.hero-desc{font-size:14px}.hero-bottom{margin-top:38px}.hero-stats{gap:23px}.hero-stat strong{font-size:22px}.hero-note{display:none}.top-link{font-size:11px;padding:8px 11px}.intro-box{padding:20px;align-items:flex-start}.intro-badge{display:none}.intro h2{font-size:16px}.intro p{font-size:12px}.section-head{margin-top:52px}.section-mini{display:none}.flow-card{padding:17px}.flow{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.flow-step{min-height:100px}.flow-step:last-child{grid-column:span 2}.controls{gap:15px}.tabs{width:100%;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}.tab{padding:10px 5px;font-size:12px}.search-wrap{flex:1 1 100%;width:100%}.skills-grid,.recipe-grid{grid-template-columns:1fr}.recipe:last-child{grid-column:auto}.skill-card{padding:19px}.recipe{padding:21px}.principle{padding:21px}.footer{margin-top:55px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important;animation:none!important}}
+@media print{body{background:#fff;color:#000}.hero{background:#fff;color:#111;border-bottom:2px solid #333}.hero-desc,.brand-sub,.hero-stat span{color:#444}.accent{color:#111}.eyebrow,.top-link,.controls,.result-status,.flow-note{display:none!important}.hero-inner{padding:10px 0}.hero-content{padding-top:16px}.hero-bottom{margin-top:15px}.hero-stat{color:#111}.skills-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.skill-card,.recipe,.intro-box,.flow-card{box-shadow:none;break-inside:avoid}.skill-card{padding:13px}.page{max-width:none;padding:0 10mm}h1{font-size:28px}.section-head{margin-top:25px}.flow{grid-template-columns:repeat(7,minmax(0,1fr))}.flow-step:last-child{grid-column:auto}.recipe-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.recipe:last-child{grid-column:auto}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="page hero-inner">
+    <div class="topbar"><div class="brand"><span class="brand-icon" aria-hidden="true">✦</span><span>BUILD WITH AI <span class="brand-sub">/ 課後分享</span></span></div><a class="top-link" href="https://github.com/duicn187532/tongling-alpha" target="_blank" rel="noopener noreferrer">查看實作案例 ↗</a></div>
+    <div class="hero-content"><span class="eyebrow">SOFTWARE BUILDER TOOLKIT · 2026</span><h1>從一個想法，<br>到一個<span class="accent">真正能用</span>的服務。</h1><p class="hero-desc">不需要一開始就會所有程式語言。先知道有哪些工具、技術與演算法，它們各自能解決什麼問題，再用 AI 協助你把它們組合起來。</p></div>
+    <div class="hero-bottom"><div class="hero-stats"><div class="hero-stat"><strong>11</strong><span>實用工具</span></div><div class="hero-stat"><strong>13</strong><span>開發技術</span></div><div class="hero-stat"><strong>15</strong><span>演算法與方法</span></div></div><div class="hero-note"><span class="star">✳</span> 以「彤靈談心 TongLing Alpha」為分享案例</div></div>
+  </div>
+</header>
+<main class="page">
+  <section class="intro" aria-label="閱讀說明"><div class="intro-box"><div class="intro-text"><div class="intro-mark" aria-hidden="true">⌘</div><div><h2>這不是工程師考試範圍，是一張軟體開發地圖。</h2><p>找出你想做的功能，再看需要什麼工具。清單可以搜尋與分類，適合收藏後隨時查閱。</p></div></div><span class="intro-badge">單檔 HTML · 可離線閱讀</span></div></section>
+  <section aria-labelledby="flow-title"><div class="section-head"><div><p class="section-kicker">01 / THE BIG PICTURE</p><h2 id="flow-title">一個軟體服務是怎麼搭出來的？</h2><p class="section-desc">以彤靈談心的開發思路簡化成七個環節。</p></div></div><div class="flow-card"><div class="flow">
+  <div class="flow-step"><span class="flow-emoji">💡</span><b>想法與需求</b><span>先說清楚要解決什麼</span></div>
+  <div class="flow-step"><span class="flow-emoji">💬</span><b>AI 共同規劃</b><span>ChatGPT / Claude</span></div>
+  <div class="flow-step"><span class="flow-emoji">⌨️</span><b>程式實作</b><span>Codex / VS Code</span></div>
+  <div class="flow-step"><span class="flow-emoji">🖥️</span><b>介面與 API</b><span>React / FastAPI</span></div>
+  <div class="flow-step"><span class="flow-emoji">🧠</span><b>資料與 AI</b><span>SQLite / RAG / Ollama</span></div>
+  <div class="flow-step"><span class="flow-emoji">🧪</span><b>測試與修正</b><span>pytest / Playwright</span></div>
+  <div class="flow-step"><span class="flow-emoji">🚀</span><b>分享與交付</b><span>GitHub / 部署</span></div>
+  </div><p class="flow-note">實際開發是反覆迭代，不一定嚴格按照左到右進行。</p></div></section>
+  <section id="library" aria-labelledby="library-title"><div class="section-head"><div><p class="section-kicker">02 / SKILL LIBRARY</p><h2 id="library-title">工具、技術、演算法一覽</h2><p class="section-desc">每一張卡片：這是什麼、能做什麼、什麼情況下適合用。</p></div><div class="section-mini">先查問題，再選工具</div></div>
+  <div class="controls"><div class="tabs" role="group" aria-label="類別篩選"><button class="tab" data-filter="all" aria-pressed="true" type="button">全部</button><button class="tab" data-filter="tool" aria-pressed="false" type="button">工具</button><button class="tab" data-filter="tech" aria-pressed="false" type="button">技術</button><button class="tab" data-filter="method" aria-pressed="false" type="button">演算法</button></div><div class="search-wrap"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input id="search" class="search" type="search" aria-label="搜尋工具、技術或關鍵字" placeholder="搜尋工具、技術或想解決的問題…" autocomplete="off" /></div></div>
+  <p class="result-status" id="result-status" aria-live="polite">顯示全部 39 項內容</p>
+  <div class="skills-grid" id="skills-grid"><article class="skill-card" data-category="tool" data-search="chatgpt / claude 討論問題、整理需求、撰寫 prd、設計流程、檢查方案 還沒開始寫程式；釐清產品、拆解任務" aria-label="ChatGPT / Claude">
+          <div class="card-top"><span class="category-tag tag-tool">工具</span><span class="card-number">01.01</span></div>
+          <h3>ChatGPT / Claude</h3>
+          <div class="card-copy"><span class="card-label">能做什麼</span><p>討論問題、整理需求、撰寫 PRD、設計流程、檢查方案</p></div>
+          <div class="card-usage"><span class="card-label">適合使用的時機</span><p>還沒開始寫程式；釐清產品、拆解任務</p></div>
+        </article>
+<article class="skill-card" data-category="tool" data-search="codex 閱讀專案程式碼、實作功能、修 bug、撰寫測試 把規格真正變成程式、持續迭代" aria-label="Codex">
+          <div class="card-top"><span class="category-tag tag-tool">工具</span><span class="card-number">01.02</span></div>
+          <h3>Codex</h3>
+          <div class="card-copy"><span class="card-label">能做什麼</span><p>閱讀專案程式碼、實作功能、修 Bug、撰寫測試</p></div>
+          <div class="card-usage"><span class="card-label">適合使用的時機</span><p>把規格真正變成程式、持續迭代</p></div>
+        </article>
+<article class="skill-card" data-category="tool" data-search="vs code 看程式碼、調整檔案、執行終端機、除錯 日常開發與檢查" aria-label="VS Code">
+          <div class="card-top"><span class="category-tag tag-tool">工具</span><span class="card-number">01.03</span></div>
+          <h3>VS Code</h3>
+          <div class="card-copy"><span class="card-label">能做什麼</span><p>看程式碼、調整檔案、執行終端機、除錯</p></div>
+          <div class="card-usage"><span class="card-label">適合使用的時機</span><p>日常開發與檢查</p></div>
+        </article>
+<article class="skill-card" data-category="tool" data-search="git / github 保存版本、比較差異、協作、公開程式與文件 每次修改、需要回復或分享時" aria-label="Git / GitHub">
+          <div class="card-top"><span class="category-tag tag-tool">工具</span><span class="card-number">01.04</span></div>
+          <h3>Git / GitHub</h3>
+          <div class="card-copy"><span class="card-label">能做什麼</span><p>保存版本、比較差異、協作、公開程式與文件</p></div>
+          <div class="card-usage"><span class="card-label">適合使用的時機</span><p>每次修改、需要回復或分享時</p></div>
+        </article>
+<article class="skill-card" data-category="tool" data-search="mermaid / draw.io 畫流程圖、系統架構圖、資料流程圖 將複雜構想視覺化" aria-label="Mermaid / draw.io">
+          <div class="card-top"><span class="category-tag tag-tool">工具</span><span class="card-number">01.05</span></div>
+          <h3>Mermaid / draw.io</h3>
+          <div class="card-copy"><span class="card-label">能做什麼</span><p>畫流程圖、系統架構圖、資料流程圖</p></div>
+          <div class="card-usage"><span class="card-label">適合使用的時機</span><p>將複雜構想視覺化</p></div>
+        </article>
+<article class="skill-card" data-category="tool" data-search="postman / curl 呼叫與檢查 api 前後端串接、排查服務問題" aria-label="Postman / curl">
+          <div class="card-top"><span class="category-tag tag-tool">工具</span><span class="card-number">01.06</span></div>
+          <h3>Postman / curl</h3>
+          <div class="card-copy"><span class="card-label">能做什麼</span><p>呼叫與檢查 API</p></div>
+          <div class="card-usage"><span class="card-label">適合使用的時機</span><p>前後端串接、排查服務問題</p></div>
+        </article>
+<article class="skill-card" data-category="tool" data-search="ollama 在自己的電腦執行 ai 模型 不想依賴雲端推論、想測試本機模型" aria-label="Ollama">
+          <div class="card-top"><span class="category-tag tag-tool">工具</span><span class="card-number">01.07</span></div>
+          <h3>Ollama</h3>
+          <div class="card-copy"><span class="card-label">能做什麼</span><p>在自己的電腦執行 AI 模型</p></div>
+          <div class="card-usage"><span class="card-label">適合使用的時機</span><p>不想依賴雲端推論、想測試本機模型</p></div>
+        </article>
+<article class="skill-card" data-category="tool" data-search="ngrok 讓外部測試者透過 https 連到本機服務 少量遠端展示或短期測試；需做好權限隔離" aria-label="ngrok">
+          <div class="card-top"><span class="category-tag tag-tool">工具</span><span class="card-number">01.08</span></div>
+          <h3>ngrok</h3>
+          <div class="card-copy"><span class="card-label">能做什麼</span><p>讓外部測試者透過 HTTPS 連到本機服務</p></div>
+          <div class="card-usage"><span class="card-label">適合使用的時機</span><p>少量遠端展示或短期測試；需做好權限隔離</p></div>
+        </article>
+<article class="skill-card" data-category="tool" data-search="pytest / playwright 自動驗證後端功能與瀏覽器操作 每次修改後避免舊功能壞掉" aria-label="pytest / Playwright">
+          <div class="card-top"><span class="category-tag tag-tool">工具</span><span class="card-number">01.09</span></div>
+          <h3>pytest / Playwright</h3>
+          <div class="card-copy"><span class="card-label">能做什麼</span><p>自動驗證後端功能與瀏覽器操作</p></div>
+          <div class="card-usage"><span class="card-label">適合使用的時機</span><p>每次修改後避免舊功能壞掉</p></div>
+        </article>
+<article class="skill-card" data-category="tool" data-search="github actions 推送程式後自動建置及測試（ci） 頻繁改版時" aria-label="GitHub Actions">
+          <div class="card-top"><span class="category-tag tag-tool">工具</span><span class="card-number">01.10</span></div>
+          <h3>GitHub Actions</h3>
+          <div class="card-copy"><span class="card-label">能做什麼</span><p>推送程式後自動建置及測試（CI）</p></div>
+          <div class="card-usage"><span class="card-label">適合使用的時機</span><p>頻繁改版時</p></div>
+        </article>
+<article class="skill-card" data-category="tool" data-search="github pages 發布靜態網頁、互動教材及純前端 prototype 沒有後端的展示網頁；不能代替 python 伺服器" aria-label="GitHub Pages">
+          <div class="card-top"><span class="category-tag tag-tool">工具</span><span class="card-number">01.11</span></div>
+          <h3>GitHub Pages</h3>
+          <div class="card-copy"><span class="card-label">能做什麼</span><p>發布靜態網頁、互動教材及純前端 Prototype</p></div>
+          <div class="card-usage"><span class="card-label">適合使用的時機</span><p>沒有後端的展示網頁；不能代替 Python 伺服器</p></div>
+        </article>
+<article class="skill-card" data-category="tech" data-search="html / css / javascript 網頁結構、樣式及互動 按鈕、表單、動態顯示" aria-label="HTML / CSS / JavaScript">
+          <div class="card-top"><span class="category-tag tag-tech">技術</span><span class="card-number">02.01</span></div>
+          <h3>HTML / CSS / JavaScript</h3>
+          <div class="card-copy"><span class="card-label">負責什麼</span><p>網頁結構、樣式及互動</p></div>
+          <div class="card-usage"><span class="card-label">應用例子</span><p>按鈕、表單、動態顯示</p></div>
+        </article>
+<article class="skill-card" data-category="tech" data-search="react + typescript + vite 建立較大型、可維護的互動前端 工作台、設定頁、手機版介面" aria-label="React + TypeScript + Vite">
+          <div class="card-top"><span class="category-tag tag-tech">技術</span><span class="card-number">02.02</span></div>
+          <h3>React + TypeScript + Vite</h3>
+          <div class="card-copy"><span class="card-label">負責什麼</span><p>建立較大型、可維護的互動前端</p></div>
+          <div class="card-usage"><span class="card-label">應用例子</span><p>工作台、設定頁、手機版介面</p></div>
+        </article>
+<article class="skill-card" data-category="tech" data-search="python + fastapi 提供後端邏輯和 api 專案管理、文件上傳、ai 任務 api" aria-label="Python + FastAPI">
+          <div class="card-top"><span class="category-tag tag-tech">技術</span><span class="card-number">02.03</span></div>
+          <h3>Python + FastAPI</h3>
+          <div class="card-copy"><span class="card-label">負責什麼</span><p>提供後端邏輯和 API</p></div>
+          <div class="card-usage"><span class="card-label">應用例子</span><p>專案管理、文件上傳、AI 任務 API</p></div>
+        </article>
+<article class="skill-card" data-category="tech" data-search="rest api / json 讓前端、後端、企業既有系統交換資料 串接銀行既有文件服務與 ai 能力" aria-label="REST API / JSON">
+          <div class="card-top"><span class="category-tag tag-tech">技術</span><span class="card-number">02.04</span></div>
+          <h3>REST API / JSON</h3>
+          <div class="card-copy"><span class="card-label">負責什麼</span><p>讓前端、後端、企業既有系統交換資料</p></div>
+          <div class="card-usage"><span class="card-label">應用例子</span><p>串接銀行既有文件服務與 AI 能力</p></div>
+        </article>
+<article class="skill-card" data-category="tech" data-search="sqlite + sqlalchemy 保存資料、定義資料模型、查詢 專案、會議、任務、紀錄" aria-label="SQLite + SQLAlchemy">
+          <div class="card-top"><span class="category-tag tag-tech">技術</span><span class="card-number">02.05</span></div>
+          <h3>SQLite + SQLAlchemy</h3>
+          <div class="card-copy"><span class="card-label">負責什麼</span><p>保存資料、定義資料模型、查詢</p></div>
+          <div class="card-usage"><span class="card-label">應用例子</span><p>專案、會議、任務、紀錄</p></div>
+        </article>
+<article class="skill-card" data-category="tech" data-search="alembic 資料庫結構版本升級 新增欄位時保留既有資料" aria-label="Alembic">
+          <div class="card-top"><span class="category-tag tag-tech">技術</span><span class="card-number">02.06</span></div>
+          <h3>Alembic</h3>
+          <div class="card-copy"><span class="card-label">負責什麼</span><p>資料庫結構版本升級</p></div>
+          <div class="card-usage"><span class="card-label">應用例子</span><p>新增欄位時保留既有資料</p></div>
+        </article>
+<article class="skill-card" data-category="tech" data-search="pdf / word / excel 解析 將文件轉成可處理的內容 建立知識庫、產生報告" aria-label="PDF / Word / Excel 解析">
+          <div class="card-top"><span class="category-tag tag-tech">技術</span><span class="card-number">02.07</span></div>
+          <h3>PDF / Word / Excel 解析</h3>
+          <div class="card-copy"><span class="card-label">負責什麼</span><p>將文件轉成可處理的內容</p></div>
+          <div class="card-usage"><span class="card-label">應用例子</span><p>建立知識庫、產生報告</p></div>
+        </article>
+<article class="skill-card" data-category="tech" data-search="embedding / 向量索引 把文字轉成語意向量並建立查詢索引 以意思搜尋相近段落" aria-label="Embedding / 向量索引">
+          <div class="card-top"><span class="category-tag tag-tech">技術</span><span class="card-number">02.08</span></div>
+          <h3>Embedding / 向量索引</h3>
+          <div class="card-copy"><span class="card-label">負責什麼</span><p>把文字轉成語意向量並建立查詢索引</p></div>
+          <div class="card-usage"><span class="card-label">應用例子</span><p>以意思搜尋相近段落</p></div>
+        </article>
+<article class="skill-card" data-category="tech" data-search="知識圖譜 保存文件、規則、系統間的關聯 查找需求牽涉哪些系統、相關文件" aria-label="知識圖譜">
+          <div class="card-top"><span class="category-tag tag-tech">技術</span><span class="card-number">02.09</span></div>
+          <h3>知識圖譜</h3>
+          <div class="card-copy"><span class="card-label">負責什麼</span><p>保存文件、規則、系統間的關聯</p></div>
+          <div class="card-usage"><span class="card-label">應用例子</span><p>查找需求牽涉哪些系統、相關文件</p></div>
+        </article>
+<article class="skill-card" data-category="tech" data-search="llm / agent workflow 用模型執行分析，控制工作步驟 需求分析、搜尋、判讀、等待人工確認" aria-label="LLM / Agent Workflow">
+          <div class="card-top"><span class="category-tag tag-tech">技術</span><span class="card-number">02.10</span></div>
+          <h3>LLM / Agent Workflow</h3>
+          <div class="card-copy"><span class="card-label">負責什麼</span><p>用模型執行分析，控制工作步驟</p></div>
+          <div class="card-usage"><span class="card-label">應用例子</span><p>需求分析、搜尋、判讀、等待人工確認</p></div>
+        </article>
+<article class="skill-card" data-category="tech" data-search="文件生成（python-docx / mermaid） 產出可編輯文件和圖表 prd word、流程圖、架構圖" aria-label="文件生成（python-docx / Mermaid）">
+          <div class="card-top"><span class="category-tag tag-tech">技術</span><span class="card-number">02.11</span></div>
+          <h3>文件生成（python-docx / Mermaid）</h3>
+          <div class="card-copy"><span class="card-label">負責什麼</span><p>產出可編輯文件和圖表</p></div>
+          <div class="card-usage"><span class="card-label">應用例子</span><p>PRD Word、流程圖、架構圖</p></div>
+        </article>
+<article class="skill-card" data-category="tech" data-search="session / 權限隔離 區分不同使用者和可存取資料 多位同學共用同一主機展示" aria-label="Session / 權限隔離">
+          <div class="card-top"><span class="category-tag tag-tech">技術</span><span class="card-number">02.12</span></div>
+          <h3>Session / 權限隔離</h3>
+          <div class="card-copy"><span class="card-label">負責什麼</span><p>區分不同使用者和可存取資料</p></div>
+          <div class="card-usage"><span class="card-label">應用例子</span><p>多位同學共用同一主機展示</p></div>
+        </article>
+<article class="skill-card" data-category="tech" data-search="ci / 部署 / 日誌 自動測試、啟動服務、追蹤錯誤 可重複啟動、測試、交付" aria-label="CI / 部署 / 日誌">
+          <div class="card-top"><span class="category-tag tag-tech">技術</span><span class="card-number">02.13</span></div>
+          <h3>CI / 部署 / 日誌</h3>
+          <div class="card-copy"><span class="card-label">負責什麼</span><p>自動測試、啟動服務、追蹤錯誤</p></div>
+          <div class="card-usage"><span class="card-label">應用例子</span><p>可重複啟動、測試、交付</p></div>
+        </article>
+<article class="skill-card" data-category="method" data-search="bm25 使用者打出明確關鍵字時，找出詞彙相關文件 查法規條號、電文代號、產品名稱" aria-label="BM25">
+          <div class="card-top"><span class="category-tag tag-method">演算法</span><span class="card-number">03.01</span></div>
+          <h3>BM25</h3>
+          <div class="card-copy"><span class="card-label">解決的問題</span><p>使用者打出明確關鍵字時，找出詞彙相關文件</p></div>
+          <div class="card-usage"><span class="card-label">什麼時候用</span><p>查法規條號、電文代號、產品名稱</p></div>
+        </article>
+<article class="skill-card" data-category="method" data-search="embedding + 向量相似度 用詞不同，但語意相近也能找出來 用自然語言找過去的需求與規範" aria-label="Embedding + 向量相似度">
+          <div class="card-top"><span class="category-tag tag-method">演算法</span><span class="card-number">03.02</span></div>
+          <h3>Embedding + 向量相似度</h3>
+          <div class="card-copy"><span class="card-label">解決的問題</span><p>用詞不同，但語意相近也能找出來</p></div>
+          <div class="card-usage"><span class="card-label">什麼時候用</span><p>用自然語言找過去的需求與規範</p></div>
+        </article>
+<article class="skill-card" data-category="method" data-search="faiss / ann 在大量向量中更快找相近項目 文件量變大、語意查詢變慢" aria-label="FAISS / ANN">
+          <div class="card-top"><span class="category-tag tag-method">演算法</span><span class="card-number">03.03</span></div>
+          <h3>FAISS / ANN</h3>
+          <div class="card-copy"><span class="card-label">解決的問題</span><p>在大量向量中更快找相近項目</p></div>
+          <div class="card-usage"><span class="card-label">什麼時候用</span><p>文件量變大、語意查詢變慢</p></div>
+        </article>
+<article class="skill-card" data-category="method" data-search="hybrid search（混合檢索） 單用關鍵字或語意搜尋都可能漏資料 同時需要精確詞與語意召回" aria-label="Hybrid Search（混合檢索）">
+          <div class="card-top"><span class="category-tag tag-method">演算法</span><span class="card-number">03.04</span></div>
+          <h3>Hybrid Search（混合檢索）</h3>
+          <div class="card-copy"><span class="card-label">解決的問題</span><p>單用關鍵字或語意搜尋都可能漏資料</p></div>
+          <div class="card-usage"><span class="card-label">什麼時候用</span><p>同時需要精確詞與語意召回</p></div>
+        </article>
+<article class="skill-card" data-category="method" data-search="rrf（排序融合） 合併多路檢索排名，避免直接混用不同分數尺度 bm25 與向量各自回傳一組結果" aria-label="RRF（排序融合）">
+          <div class="card-top"><span class="category-tag tag-method">演算法</span><span class="card-number">03.05</span></div>
+          <h3>RRF（排序融合）</h3>
+          <div class="card-copy"><span class="card-label">解決的問題</span><p>合併多路檢索排名，避免直接混用不同分數尺度</p></div>
+          <div class="card-usage"><span class="card-label">什麼時候用</span><p>BM25 與向量各自回傳一組結果</p></div>
+        </article>
+<article class="skill-card" data-category="method" data-search="reranker（重排序） 初步找到了候選，仍需要重新比對相關程度 降低不相關證據進入最終分析" aria-label="Reranker（重排序）">
+          <div class="card-top"><span class="category-tag tag-method">演算法</span><span class="card-number">03.06</span></div>
+          <h3>Reranker（重排序）</h3>
+          <div class="card-copy"><span class="card-label">解決的問題</span><p>初步找到了候選，仍需要重新比對相關程度</p></div>
+          <div class="card-usage"><span class="card-label">什麼時候用</span><p>降低不相關證據進入最終分析</p></div>
+        </article>
+<article class="skill-card" data-category="method" data-search="chunking（文件切段） 文件太長，不易檢索與精確引用 匯入 pdf、作業辦法、系統規格" aria-label="Chunking（文件切段）">
+          <div class="card-top"><span class="category-tag tag-method">演算法</span><span class="card-number">03.07</span></div>
+          <h3>Chunking（文件切段）</h3>
+          <div class="card-copy"><span class="card-label">解決的問題</span><p>文件太長，不易檢索與精確引用</p></div>
+          <div class="card-usage"><span class="card-label">什麼時候用</span><p>匯入 PDF、作業辦法、系統規格</p></div>
+        </article>
+<article class="skill-card" data-category="method" data-search="top-k retrieval 控制檢索結果數量，降低雜訊與處理成本 只取最有可能相關的 k 個片段" aria-label="Top-K Retrieval">
+          <div class="card-top"><span class="category-tag tag-method">演算法</span><span class="card-number">03.08</span></div>
+          <h3>Top-K Retrieval</h3>
+          <div class="card-copy"><span class="card-label">解決的問題</span><p>控制檢索結果數量，降低雜訊與處理成本</p></div>
+          <div class="card-usage"><span class="card-label">什麼時候用</span><p>只取最有可能相關的 K 個片段</p></div>
+        </article>
+<article class="skill-card" data-category="method" data-search="graph traversal（圖走訪） 找到文件或系統間的多跳關係 追查某規則影響哪些功能或系統" aria-label="Graph Traversal（圖走訪）">
+          <div class="card-top"><span class="category-tag tag-method">演算法</span><span class="card-number">03.09</span></div>
+          <h3>Graph Traversal（圖走訪）</h3>
+          <div class="card-copy"><span class="card-label">解決的問題</span><p>找到文件或系統間的多跳關係</p></div>
+          <div class="card-usage"><span class="card-label">什麼時候用</span><p>追查某規則影響哪些功能或系統</p></div>
+        </article>
+<article class="skill-card" data-category="method" data-search="rag（檢索增強生成） ai 缺乏內部知識，或容易憑空回答 先找到來源，再要求 ai 根據證據回覆" aria-label="RAG（檢索增強生成）">
+          <div class="card-top"><span class="category-tag tag-method">演算法</span><span class="card-number">03.10</span></div>
+          <h3>RAG（檢索增強生成）</h3>
+          <div class="card-copy"><span class="card-label">解決的問題</span><p>AI 缺乏內部知識，或容易憑空回答</p></div>
+          <div class="card-usage"><span class="card-label">什麼時候用</span><p>先找到來源，再要求 AI 根據證據回覆</p></div>
+        </article>
+<article class="skill-card" data-category="method" data-search="rule precedence（規則優先序） 新舊版本、權威性、適用範圍出現矛盾 判斷哪份規範可能適用；仍需人工覆核" aria-label="Rule Precedence（規則優先序）">
+          <div class="card-top"><span class="category-tag tag-method">演算法</span><span class="card-number">03.11</span></div>
+          <h3>Rule Precedence（規則優先序）</h3>
+          <div class="card-copy"><span class="card-label">解決的問題</span><p>新舊版本、權威性、適用範圍出現矛盾</p></div>
+          <div class="card-usage"><span class="card-label">什麼時候用</span><p>判斷哪份規範可能適用；仍需人工覆核</p></div>
+        </article>
+<article class="skill-card" data-category="method" data-search="state machine（狀態機） 長流程執行到一半，難以追蹤、暫停與恢復 agent 工作、人工決策、會議等待" aria-label="State Machine（狀態機）">
+          <div class="card-top"><span class="category-tag tag-method">演算法</span><span class="card-number">03.12</span></div>
+          <h3>State Machine（狀態機）</h3>
+          <div class="card-copy"><span class="card-label">解決的問題</span><p>長流程執行到一半，難以追蹤、暫停與恢復</p></div>
+          <div class="card-usage"><span class="card-label">什麼時候用</span><p>Agent 工作、人工決策、會議等待</p></div>
+        </article>
+<article class="skill-card" data-category="method" data-search="queue + concurrency limit（佇列與併發控制） 多人同時使用，造成模型及主機過載 多人 demo、ai 推論、文件生成" aria-label="Queue + Concurrency Limit（佇列與併發控制）">
+          <div class="card-top"><span class="category-tag tag-method">演算法</span><span class="card-number">03.13</span></div>
+          <h3>Queue + Concurrency Limit（佇列與併發控制）</h3>
+          <div class="card-copy"><span class="card-label">解決的問題</span><p>多人同時使用，造成模型及主機過載</p></div>
+          <div class="card-usage"><span class="card-label">什麼時候用</span><p>多人 Demo、AI 推論、文件生成</p></div>
+        </article>
+<article class="skill-card" data-category="method" data-search="cache（快取） 相同資料重複計算浪費時間 重複查詢、文件解析與模型結果重用" aria-label="Cache（快取）">
+          <div class="card-top"><span class="category-tag tag-method">演算法</span><span class="card-number">03.14</span></div>
+          <h3>Cache（快取）</h3>
+          <div class="card-copy"><span class="card-label">解決的問題</span><p>相同資料重複計算浪費時間</p></div>
+          <div class="card-usage"><span class="card-label">什麼時候用</span><p>重複查詢、文件解析與模型結果重用</p></div>
+        </article>
+<article class="skill-card" data-category="method" data-search="benchmark / precision@k / recall@k 很難客觀比較檢索方案的品質 優化 rag 前後量測效果" aria-label="Benchmark / Precision@K / Recall@K">
+          <div class="card-top"><span class="category-tag tag-method">演算法</span><span class="card-number">03.15</span></div>
+          <h3>Benchmark / Precision@K / Recall@K</h3>
+          <div class="card-copy"><span class="card-label">解決的問題</span><p>很難客觀比較檢索方案的品質</p></div>
+          <div class="card-usage"><span class="card-label">什麼時候用</span><p>優化 RAG 前後量測效果</p></div>
+        </article></div>
+  <div class="empty" id="empty" aria-hidden="true"><strong>找不到符合的內容</strong>換個關鍵字，或選擇「全部」試試看。</div>
+  </section>
+  <section aria-labelledby="starter-title"><div class="section-head"><div><p class="section-kicker">03 / WHERE TO START</p><h2 id="starter-title">依照你的目標，從這裡開始</h2><p class="section-desc">不必一次學全部，能把第一個版本做出來最重要。</p></div></div>
+  <div class="recipe-grid"><article class="recipe"><span class="recipe-icon" aria-hidden="true">🌐</span><h3>只想做一個互動展示頁面</h3><p class="tagline">例如：產品介紹、問卷、互動教材、課堂 Prototype。</p><div class="stack"><span>ChatGPT</span><span>Codex</span><span>HTML / CSS / JS</span><span>GitHub Pages</span></div></article>
+  <article class="recipe"><span class="recipe-icon" aria-hidden="true">⚙️</span><h3>想做一個真正可操作的服務</h3><p class="tagline">例如：申請系統、工作台、文件管理、線上表單。</p><div class="stack"><span>React</span><span>FastAPI</span><span>SQLite</span><span>GitHub</span><span>pytest</span></div></article>
+  <article class="recipe"><span class="recipe-icon" aria-hidden="true">🧠</span><h3>想讓系統讀文件、用 AI 分析</h3><p class="tagline">例如：公司規章問答、需求分析、文件檢索與 PRD 輔助。</p><div class="stack"><span>文件解析</span><span>BM25</span><span>Embedding</span><span>RAG</span><span>LLM</span><span>人工覆核</span></div></article></div>
+  <aside class="principle"><h3>一個實務上很重要的觀念</h3><p>AI 可以幫你生成程式、提供方案與分析資料，但產品規格、功能是否正確、資訊是否可信、權限是否安全，仍需要人來驗證。彤靈談心目前是 Alpha；這份清單涵蓋實際使用與可延伸的方法，不代表全部功能預設啟用或已經過正式驗證。RAG、State Machine、Queue、Cache 也不全是狹義的演算法。</p></aside>
+  </section>
+  <footer class="footer"><div><strong>BUILD WITH AI</strong> · 金融研訓院 AI × 金融商品設計課後交流<br><span class="small-foot">單一 HTML 檔案，可直接開啟，也可部署於 GitHub Pages。</span></div><div>實際案例：<a href="https://github.com/duicn187532/tongling-alpha" target="_blank" rel="noopener noreferrer">彤靈談心 TongLing Alpha ↗</a></div></footer>
+</main>
+<script>
+(()=>{
+  'use strict';
+  const tabs=[...document.querySelectorAll('.tab')], cards=[...document.querySelectorAll('.skill-card')];
+  const search=document.getElementById('search'),status=document.getElementById('result-status'),empty=document.getElementById('empty');
+  let category='all';
+  function apply(){
+    const words=search.value.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
+    let count=0;
+    for(const card of cards){const matchesCategory=category==='all'||card.dataset.category===category;const matchesText=words.every(word=>card.dataset.search.includes(word));const visible=matchesCategory&&matchesText;card.hidden=!visible;if(visible)count++;}
+    status.textContent=`顯示 ${count} / ${cards.length} 項內容`;
+    empty.setAttribute('aria-hidden',count===0?'false':'true');
+  }
+  tabs.forEach(tab=>tab.addEventListener('click',()=>{category=tab.dataset.filter;tabs.forEach(t=>t.setAttribute('aria-pressed',String(t===tab)));apply();}));
+  search.addEventListener('input',apply);
+})();
+</script>
+</body>
+</html>
